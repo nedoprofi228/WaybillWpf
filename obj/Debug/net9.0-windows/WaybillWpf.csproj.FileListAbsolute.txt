@@ -1,0 +1,5 @@
+D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.csproj.AssemblyReference.cache
+D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\MainWindow.g.cs
+D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\App.g.cs
+D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf_MarkupCompile.cache
+D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf_MarkupCompile.lref
