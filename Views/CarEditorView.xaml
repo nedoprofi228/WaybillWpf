@@ -1,0 +1,49 @@
+<Window x:Class="WaybillWpf.Views.Admin.CarEditorView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewmodels="clr-namespace:WaybillWpf.ViewModels.Admin"
+        d:DataContext="{d:DesignInstance Type=viewmodels:CarEditorViewModel}"
+        mc:Ignorable="d"
+        Title="Редактор автомобиля" Height="250" Width="350"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+    
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/> <!-- Растяжка -->
+            <RowDefinition Height="Auto"/> <!-- Кнопки -->
+        </Grid.RowDefinitions>
+
+        <!-- Модель -->
+        <TextBlock Grid.Row="0" Text="Модель автомобиля:" FontWeight="SemiBold"/>
+        <TextBox Grid.Row="1" 
+                 Text="{Binding Model, UpdateSourceTrigger=PropertyChanged}" 
+                 Height="25" Margin="0,5,0,15" VerticalContentAlignment="Center"/>
+
+        <!-- Расход топлива -->
+        <TextBlock Grid.Row="2" Text="Расход топлива (л/100км):" FontWeight="SemiBold"/>
+        <!-- StringFormat=F2 форматирует число, ограничивая 2 знаками после запятой при отображении -->
+        <TextBox Grid.Row="3" 
+                 Text="{Binding FuelRate, UpdateSourceTrigger=LostFocus, StringFormat=F2}" 
+                 Height="25" Margin="0,5,0,0" VerticalContentAlignment="Center"/>
+        <TextBlock Grid.Row="4" Text="(Используйте точку как разделитель)" 
+                   FontSize="10" Foreground="Gray" VerticalAlignment="Top" Margin="0,2,0,0"/>
+
+        <!-- Кнопки -->
+        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+            <Button Content="Сохранить" 
+                    Command="{Binding SaveCommand}" 
+                    IsDefault="True"
+                    Width="100" Height="30" Margin="0,0,10,0"/>
+            
+            <Button Content="Отмена" 
+                    IsCancel="True" 
+                    Width="80" Height="30"/>
+        </StackPanel>
+    </Grid>
+</Window>

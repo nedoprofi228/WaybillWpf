@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WaybillWpf.Core.DTO;
-using WaybillWpf.Core.Entities;
-using WaybillWpf.Core.Enums;
-using WaybillWpf.Core.Interfaces;
+using WaybillWpf.Domain.DTO;
+using WaybillWpf.Domain.Entities;
+using WaybillWpf.Domain.Enums;
+using WaybillWpf.Domain.Interfaces;
 
 namespace WaybillWpf.Services
 {
@@ -66,7 +66,7 @@ namespace WaybillWpf.Services
 
             // 1. Находим ID всех машин, которые сейчас "Выданы" (на рейсе)
             var unavailableCarIds = allWaybills
-                .Where(w => w.WaybillStatus == WaybillStatus.Draft)
+                .Where(w => w.WaybillStatus == WaybillStatus.InProgress)
                 .Select(w => w.CarId)
                 .ToHashSet(); // ToHashSet() - для быстрой проверки
 
@@ -87,7 +87,7 @@ namespace WaybillWpf.Services
 
             // 1. Проверяем бизнес-логику: не на активном рейсе
             bool hasActiveWaybills = allWaybills.Any(w => w.CarId == carId &&
-                                                          w.WaybillStatus == WaybillStatus.Draft);
+                                                          w.WaybillStatus == WaybillStatus.InProgress);
             if (hasActiveWaybills)
             {
                 throw new Exception("Нельзя удалить машину, она находится на активном рейсе.");

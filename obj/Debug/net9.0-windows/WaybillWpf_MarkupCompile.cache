@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET9_0;NETCOREAPP
 D:\Programming\Projects\С#\WaybillWpf\App.xaml
-11407045341
+12-1417084670
 
-471261425089
+761558303193
 2152093135517
-MainWindow.xaml;
+MainWindow.xaml;Views\AdminCarsView.xaml;Views\AdminDriversView.xaml;Views\AdminMainView.xaml;Views\AdminStatisticsView.xaml;Views\CarEditorView.xaml;Views\DriverEditorView.xaml;Views\LoginView.xaml;Views\ManagerWaybillView.xaml;Views\NewWaybillView.xaml;Views\RegistrationView.xaml;Views\WaybillDetailEditorView.xaml;
 
-True
+False
 

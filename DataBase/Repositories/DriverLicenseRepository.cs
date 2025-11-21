@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using WaybillWpf.Core.Entities;
-using WaybillWpf.Core.Interfaces;
+using WaybillWpf.Domain.Entities;
+using WaybillWpf.Domain.Interfaces;
 
 namespace WaybillWpf.DataBase;
 

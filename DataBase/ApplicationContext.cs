@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
-using WaybillWpf.Core.Entities;
+using WaybillWpf.Domain.Entities;
+using WaybillWpf.Domain.Enums;
 
 namespace WaybillWpf.DataBase;
 
@@ -12,9 +13,15 @@ public class ApplicationContext: DbContext
     public DbSet<Waybill> Waybills { get; set; }
     public DbSet<WaybillDetails> WaybillDetails { get; set; }
 
+    public ApplicationContext(DbContextOptions<ApplicationContext> options): base(options)
+    {
+        Database.EnsureCreated();
+    }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Username=postgres;Password=9643;Database=mydatabase3;");
+        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Username=postgres;Password=9643;Database=mydatabase7;");
+        
         
         base.OnConfiguring(optionsBuilder);
     }
@@ -28,7 +35,16 @@ public class ApplicationContext: DbContext
         modelBuilder.Entity<Waybill>()
             .HasMany(w => w.WaybillDetails)
             .WithOne(d => d.Waybill);
+
+        modelBuilder.Entity<User>().HasData(new User()
+            {
+                Id = 1,
+                Name = "admin",
+                Password = "admin",
+                Role = UserRole.Admin
+            }
+        );
         
         base.OnModelCreating(modelBuilder);
-    }
+   }
 }

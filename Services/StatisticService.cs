@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WaybillWpf.Core.DTO;
-using WaybillWpf.Core.Entities;
-using WaybillWpf.Core.Enums;
-using WaybillWpf.Core.Interfaces;
+using WaybillWpf.Domain.DTO;
+using WaybillWpf.Domain.Entities;
+using WaybillWpf.Domain.Enums;
+using WaybillWpf.Domain.Interfaces;
 
 namespace WaybillWpf.Services
 {
@@ -41,42 +41,35 @@ namespace WaybillWpf.Services
         /// </summary>
         public async Task<DashboardKpi> GetDashboardKpisAsync(DateTime startDate, DateTime endDate)
         {
-            // Получаем все нужные данные
-            var waybills = await GetCompletedWaybillsInRange(startDate, endDate);
-            var cars = await _carsRepo.GetAllAsync();
-            
-            var kpi = new DashboardKpi();
+            // 1. Получаем все завершенные и архивные путевые листы за период
+            // (Считаем, что дата путевого листа = дата создания его первой записи или дата самого листа, 
+            // но для точности лучше фильтровать по деталям поездок)
+            var waybills = (await _waybillsRepo.GetWaybillsByDateRangeAsync(startDate, endDate))
+                .Where(w => w.WaybillStatus == WaybillStatus.Completed || w.WaybillStatus == WaybillStatus.Archived);
 
-            if (!waybills.Any())
+            // 2. Фильтруем детали по датам (если нужно точное совпадение периода поездки)
+            var relevantDetails = waybills
+                .SelectMany(w => w.WaybillDetails)
+                .Where(d => d.DepartureDateTime >= startDate && d.ArrivalDateTime <= endDate)
+                .ToList();
+
+            // 3. Считаем KPI
+    
+
+            // Суммарный пробег (сумма разниц спидометра по всем деталям)
+            // Используем свойство Distance из сущности (EndMealing - StartMealing)
+            float totalMileage = relevantDetails.Sum(d => d.Distance);
+
+            // Суммарный расход топлива (ФАКТ)
+            // Используем поле FuelConsumed, которое ввел менеджер
+            float totalFuelConsumed = relevantDetails.Sum(d => d.FuelConsumed);
+
+            return new DashboardKpi
             {
-                return kpi; // Возвращаем пустой KPI, если нет данных
-            }
-
-            kpi.TotalWaybillsCompleted = waybills.Count;
-            kpi.TotalTripsCompleted = waybills.Sum(w => w.WaybillDetails.Count);
-
-            foreach (var wb in waybills)
-            {
-                var car = cars.FirstOrDefault(c => c.Id == wb.CarId);
-                if (car == null) continue;
-
-                foreach (var detail in wb.WaybillDetails)
-                {
-                    // Используем исправленную логику из NotMapped свойств
-                    float mileage = detail.EndMealing - detail.StartMealing;
-                    float fuelSpent = detail.StartRemeaningFuel - detail.EndRemeaningFuel;
-
-                    if (mileage > 0)
-                    {
-                        float fuelPlanned = (mileage / 100.0f) * car.FuelRate;
-                        
-                        kpi.TotalMileage += mileage;
-                        kpi.TotalFuelSpent += fuelSpent;
-                        kpi.TotalFuelDifference += (fuelSpent - fuelPlanned);
-                    }
-                }
-            }
-            return kpi;
+                TotalWaybills = waybills.Count(),
+                TotalMileage = (float)Math.Round(totalMileage, 1),
+                TotalFuelConsumed = (float)Math.Round(totalFuelConsumed, 1)
+            };
         }
 
         /// <summary>
@@ -84,63 +77,37 @@ namespace WaybillWpf.Services
         /// </summary>
         public async Task<ICollection<FuelEfficiencyReportItem>> GetFuelEfficiencyReportAsync(DateTime startDate, DateTime endDate)
         {
-            var waybills = await GetCompletedWaybillsInRange(startDate, endDate);
-            var cars = await _carsRepo.GetAllAsync();
-            var drivers = await _driversRepo.GetAllAsync();
+            var waybills = (await _waybillsRepo.GetWaybillsByDateRangeAsync(startDate, endDate))
+                .Where(w => w.WaybillStatus == WaybillStatus.Completed || 
+                            w.WaybillStatus == WaybillStatus.Archived);
 
-            var reportItems = new List<FuelEfficiencyReportItem>();
-
-            foreach (var wb in waybills)
-            {
-                var car = cars.FirstOrDefault(c => c.Id == wb.CarId);
-                var driver = drivers.FirstOrDefault(d => d.Id == wb.DriverId);
-
-                if (car == null || driver == null || !wb.WaybillDetails.Any())
+            var report = waybills
+                .GroupBy(w => w.Car)
+                .Select(group => 
                 {
-                    continue; // Пропускаем, если данные неполные
-                }
+                    var car = group.Key;
+                    var details = group.SelectMany(w => w.WaybillDetails)
+                        .Where(d => d.DepartureDateTime >= startDate && d.ArrivalDateTime <= endDate);
 
-                // Суммируем все отрезки (Details) для одного путевого листа (Waybill)
-                float totalMileage = wb.WaybillDetails.Sum(d => d.EndMealing - d.StartMealing);
-                float totalFuelSpent = wb.WaybillDetails.Sum(d => d.StartRemeaningFuel - d.EndRemeaningFuel);
+                    // ФАКТ: Сумма того, что ввели в поле FuelConsumed
+                    float totalFactFuel = details.Sum(d => d.FuelConsumed);
 
-                if (totalMileage <= 0)
-                {
-                    continue; // Пропускаем, если не было пробега
-                }
+                    // НОРМА: Время * Расход
+                    double totalHours = details.Sum(d => d.InWayTime.TotalHours);
+                    float totalNormFuel = (float)(totalHours * car.FuelRate);
 
-                // Расчет плана
-                float fuelPlanned = (totalMileage / 100.0f) * car.FuelRate;
-                
-                reportItems.Add(new FuelEfficiencyReportItem
-                {
-                    CarModel = car.Model,
-                    DriverName = driver.DriverName,
-                    TotalMileage = totalMileage,
-                    FuelRateNorm = car.FuelRate,
-                    FuelPlanned = (float)Math.Round(fuelPlanned, 2),
-                    FuelActual = (float)Math.Round(totalFuelSpent, 2),
-                    Difference = (float)Math.Round(totalFuelSpent - fuelPlanned, 2) // > 0 = перерасход
-                });
-            }
-
-            // Группируем результат, чтобы получить итог по каждой машине/водителю
-            var groupedReport = reportItems
-                .GroupBy(item => new { item.CarModel, item.DriverName })
-                .Select(g => new FuelEfficiencyReportItem
-                {
-                    CarModel = g.Key.CarModel,
-                    DriverName = g.Key.DriverName,
-                    FuelRateNorm = g.First().FuelRateNorm, // Норматив у них один
-                    TotalMileage = (float)Math.Round(g.Sum(i => i.TotalMileage), 2),
-                    FuelPlanned = (float)Math.Round(g.Sum(i => i.FuelPlanned), 2),
-                    FuelActual = (float)Math.Round(g.Sum(i => i.FuelActual), 2),
-                    Difference = (float)Math.Round(g.Sum(i => i.Difference), 2)
+                    return new FuelEfficiencyReportItem
+                    {
+                        CarModel = car.Model,
+                        Distance = details.Sum(d => d.Distance),
+                        FactFuel = (float)Math.Round(totalFactFuel, 2),
+                        NormFuel = (float)Math.Round(totalNormFuel, 2),
+                        Difference = (float)Math.Round(totalFactFuel - totalNormFuel, 2) // +Перерасход
+                    };
                 })
-                .OrderByDescending(r => r.Difference) // Сверху худшие (наибольший перерасход)
                 .ToList();
-                
-            return groupedReport;
+
+            return report;
         }
 
         /// <summary>

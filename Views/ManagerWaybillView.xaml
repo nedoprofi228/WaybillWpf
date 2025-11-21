@@ -1,0 +1,148 @@
+<Window x:Class="WaybillWpf.Views.ManagerWaybillView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:WaybillWpf.Views"
+             xmlns:converters="clr-namespace:WaybillWpf.Converters"
+             xmlns:viewModels="clr-namespace:WaybillWpf.ViewModels"
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance viewModels:ManagerWaybillViewModel, IsDesignTimeCreatable=False}"
+             d:DesignHeight="600" d:DesignWidth="900"
+             Background="#F5F5F5">
+    
+    <Window.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BoolToVis" />
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/> <ColumnDefinition Width="*"/>   </Grid.ColumnDefinitions>
+
+        <Border Grid.Column="0" Background="White" BorderThickness="0,0,1,0" BorderBrush="#DAE1E7">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/> <RowDefinition Height="*"/>    <RowDefinition Height="Auto"/> </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Путевые листы" FontSize="16" FontWeight="Bold" Margin="10"/>
+
+                <ListView Grid.Row="1" Margin="5,0,5,5" 
+                          ItemsSource="{Binding WaybillsList}"
+                          SelectedItem="{Binding SelectedWaybill}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" Margin="2">
+                                <TextBlock Text="ПЛ №" />
+                                <TextBlock Text="{Binding Id}" FontWeight="Bold" Margin="5,0"/>
+                                <TextBlock Text="-" Margin="5,0"/>
+                                <TextBlock Text="{Binding WaybillStatus}" Foreground="Gray" FontStyle="Italic"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
+                <StackPanel Grid.Row="2" Orientation="Vertical" Margin="10">
+                    <Button Content="Добавить новый" Command="{Binding AddWaybillCommand}" Padding="5"/>
+                    <Button Content="Архивировать" Command="{Binding ArchiveWaybillCommand}" Margin="0,5,0,0"
+                            IsEnabled="{Binding CanArchive}" ToolTip="Можно архивировать только 'Завершенные' листы"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            
+            <StackPanel>
+                <Grid Background="#E9ECEF"
+                      Visibility="{Binding IsDetailPanelVisible, ConverterParameter=True, Converter={StaticResource BoolToVis}}">
+                    <TextBlock Text="Выберите путевой лист из списка слева" 
+                               HorizontalAlignment="Center" VerticalAlignment="Center" 
+                               FontSize="16" Foreground="Gray"/>
+                </Grid>
+
+                <StackPanel Margin="20"
+                            Visibility="{Binding IsDetailPanelVisible, Converter={StaticResource BoolToVis}}">
+
+                    <GroupBox Header="Главная информация (Только чтение)" FontWeight="Bold" IsEnabled="False">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="Номер ПЛ:" Margin="5"/>
+                            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding SelectedWaybill.Id}" IsReadOnly="True" Margin="5"/>
+                            
+                            <TextBlock Grid.Row="1" Grid.Column="0" Text="Водитель:" Margin="5"/>
+                            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding SelectedWaybill.Driver.DriverName}" IsReadOnly="True" Margin="5"/>
+                            
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="Машина:" Margin="5"/>
+                            <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding SelectedWaybill.Car.Model}" IsReadOnly="True" Margin="5"/>
+                            
+                            <TextBlock Grid.Row="3" Grid.Column="0" Text="Норма расхода (л/100км):" Margin="5"/>
+                            <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding SelectedWaybill.Car.FuelRate}" IsReadOnly="True" Margin="5"/>
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Header="Отрезки пути (Детали)" Margin="0,20,0,0">
+                        <StackPanel>
+                            <DataGrid ItemsSource="{Binding SelectedWaybill.WaybillDetails}" 
+                                      SelectedItem="{Binding SelectedWaybillDetails}"
+                                      AutoGenerateColumns="False" IsReadOnly="True" MaxHeight="200">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Выезд" Binding="{Binding DepartureDateTime, StringFormat='g'}" Width="*"/>
+                                    <DataGridTextColumn Header="Прибытие" Binding="{Binding ArrivalDateTime, StringFormat='g'}" Width="*"/>
+                                    <DataGridTextColumn Header="Пробег (Начало)" Binding="{Binding StartMealing}" Width="Auto"/>
+                                    <DataGridTextColumn Header="Пробег (Конец)" Binding="{Binding EndMealing}" Width="Auto"/>
+                                    <DataGridTextColumn Header="Топливо (Начало)" Binding="{Binding StartRemeaningFuel}" Width="Auto"/>
+                                    <DataGridTextColumn Header="Топливо (Конец)" Binding="{Binding EndRemeaningFuel}" Width="Auto"/>
+                                    <DataGridTemplateColumn Header="Действия" Width="Auto" Visibility="{Binding DataContext.CanEditDetails, Converter={StaticResource BoolToVis}, RelativeSource={RelativeSource AncestorType=DataGrid}}">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Button Content="Удалить" 
+                                                        Command="{Binding DataContext.DeleteWaybillDetailCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                        CommandParameter="{Binding}"
+                                                        Visibility="{Binding DataContext.CanEditDetails, Converter={StaticResource BoolToVis}, RelativeSource={RelativeSource AncestorType=DataGrid}}"
+                                                        Padding="5,2" Margin="2"/>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                    
+                                </DataGrid.Columns>
+                            </DataGrid>
+                            
+                            <Border Margin="0,10,0,0" Padding="10" BorderThickness="1" BorderBrush="Green"
+                                    IsEnabled="{Binding CanEditDetails}"
+                                    ToolTip="Добавлять детали можно только в 'Черновик'">
+                                <Grid>
+                                    <TextBlock Text="[Здесь форма для добавления нового отрезка]" Margin="10"/>
+                                    
+                                    <Button Content="Добавить отрезок" Command="{Binding AddNewDetailCommand}" 
+                                            HorizontalAlignment="Right" VerticalAlignment="Bottom" Padding="5"/>
+                                </Grid>
+                            </Border>
+                        </StackPanel>
+                    </GroupBox>
+
+                    <Button Content="Сохранить и Выдать лист" 
+                            Command="{Binding IssueWaybillCommand}"
+                            Background="DarkGreen" Foreground="White"
+                            Padding="10" Margin="0,20,0,0" FontWeight="Bold"
+                            ToolTip="После нажатия, лист нельзя будет редактировать!"
+                            Visibility="{Binding CanIssue, Converter={StaticResource BoolToVis}}"/>
+
+                    <Button Content="Завершить лист" 
+                            Command="{Binding CompleteWaybillCommand}"
+                            Background="DarkBlue" Foreground="White"
+                            Padding="10" Margin="0,20,0,0" FontWeight="Bold"
+                            Visibility="{Binding CanComplete, Converter={StaticResource BoolToVis}}"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Window>

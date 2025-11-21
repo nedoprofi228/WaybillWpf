@@ -1,8 +1,8 @@
-using WaybillWpf.Core.DTO;
-using WaybillWpf.Core.Entities;
-using WaybillWpf.Core.Interfaces;
 using System.Threading.Tasks;
-using WaybillWpf.Core.Enums;
+using WaybillWpf.Domain.DTO;
+using WaybillWpf.Domain.Entities;
+using WaybillWpf.Domain.Enums;
+using WaybillWpf.Domain.Interfaces;
 
 namespace WaybillWpf.Services;
 
@@ -13,14 +13,18 @@ public class AuthService : IAuthService
     // Используем ваш ServicesProvider для получения репозитория
     public AuthService()
     {
-        _usersRepository = ServicesProvider.GetService<IUsersRepository>()
-                           ?? throw new InvalidOperationException("IUsersRepository is not registered.");
+        _usersRepository =
+            ServicesProvider.GetService<IUsersRepository>()
+            ?? throw new InvalidOperationException("IUsersRepository is not registered.");
     }
 
     public async Task<User?> LoginAsync(AuthUserData userData)
     {
         // ⚠️ ВАЖНО: См. замечание о безопасности ниже!
-        var user = await _usersRepository.GetUserByNameAndPasswordAsync(userData.Name, userData.Password);
+        var user = await _usersRepository.GetUserByNameAndPasswordAsync(
+            userData.Name,
+            userData.Password
+        );
 
         if (user == null)
         {
@@ -32,16 +36,23 @@ public class AuthService : IAuthService
 
     public async Task<User?> RegisterAsync(AuthUserData newUserData)
     {
-        if(await _usersRepository.GetUserByNameAndPasswordAsync(newUserData.Name, newUserData.Password) != null)
+        if (
+            await _usersRepository.GetUserByNameAndPasswordAsync(
+                newUserData.Name,
+                newUserData.Password
+            ) != null
+        )
+        {
             return null;
-        
+        }
+
         User newUser = new User()
         {
             Name = newUserData.Name,
             Password = newUserData.Password,
-            Role = UserRole.Employee
+            Role = UserRole.Employee,
         };
-        
+
         await _usersRepository.AddAsync(newUser);
 
         return newUser;

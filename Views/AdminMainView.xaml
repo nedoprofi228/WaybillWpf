@@ -1,0 +1,59 @@
+<Window x:Class="WaybillWpf.Views.Admin.AdminMainView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:WaybillWpf.ViewModels.Admin"
+        xmlns:views="clr-namespace:WaybillWpf.Views.Admin"
+        xmlns:views1="clr-namespace:WaybillWpf.Views"
+        xmlns:global="clr-namespace:"
+        mc:Ignorable="d"
+        Title="Панель Администратора" Height="600" Width="1000"
+        WindowStartupLocation="CenterScreen">
+
+    <!-- Привязываем ViewModel через Code-Behind или DI, здесь для дизайнера -->
+    <d:Window.DataContext>
+        <vm:AdminMainViewModel/>
+    </d:Window.DataContext>
+
+    <Window.Resources>
+        <!-- МАГИЯ ПЕРЕКЛЮЧЕНИЯ: Связываем ViewModel с UserControl -->
+        <DataTemplate DataType="{x:Type vm:AdminCarsViewModel}">
+            <views:AdminCarsView/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type vm:AdminDriversViewModel}">
+            <views1:AdminDriversView/>
+        </DataTemplate>
+        
+        <DataTemplate DataType="{x:Type global:AdminStatisticsViewModel}">
+            <views:AdminStatisticsView/>
+        </DataTemplate>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/> <!-- Меню -->
+            <ColumnDefinition Width="*"/>   <!-- Контент -->
+        </Grid.ColumnDefinitions>
+
+        <!-- Левое меню -->
+        <Border Grid.Column="0" Background="#333" Padding="10">
+            <StackPanel>
+                <TextBlock Text="АДМИНКА" Foreground="White" FontSize="20" 
+                           FontWeight="Bold" Margin="0,0,0,20" HorizontalAlignment="Center"/>
+
+                <Button Content="Статистика" Command="{Binding ShowStatsCommand}" Height="35" Margin="0,5"/>
+                <Button Content="Машины" Command="{Binding ShowCarsCommand}" Height="35" Margin="0,5"/>
+                <Button Content="Водители" Command="{Binding ShowDriversCommand}" Height="35" Margin="0,5"/>
+                
+                <Separator Margin="0,20" Background="Gray"/>
+                
+                <Button Content="Выйти" Command="{Binding LogoutCommand}" Height="35" Background="#AA5555"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Правая часть: ContentControl меняет содержимое в зависимости от CurrentView -->
+        <ContentControl Grid.Column="1" Content="{Binding CurrentView}" Margin="10"/>
+    </Grid>
+</Window>

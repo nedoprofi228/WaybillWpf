@@ -1,6 +1,8 @@
 ﻿using System.Configuration;
 using System.Data;
 using System.Windows;
+using WaybillWpf.Services;
+using WaybillWpf.Views;
 
 namespace WaybillWpf;
 
@@ -9,4 +11,10 @@ namespace WaybillWpf;
 /// </summary>
 public partial class App : Application
 {
+    public App()
+    {
+        var window = ServicesProvider.GetService<LoginView>();
+        window.Show();
+    }
+    
 }

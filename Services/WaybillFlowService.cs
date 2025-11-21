@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WaybillWpf.Core.Entities;
-using WaybillWpf.Core.Enums;
-using WaybillWpf.Core.Exceptions;
-using WaybillWpf.Core.Interfaces;
+using WaybillWpf.Domain.Entities;
+using WaybillWpf.Domain.Enums;
+using WaybillWpf.Domain.Exceptions;
+using WaybillWpf.Domain.Interfaces;
 
 namespace WaybillWpf.Services
 {
@@ -37,17 +37,9 @@ namespace WaybillWpf.Services
             return waybill; // Возвращаем сущность с Id
         }
 
-        public async Task<Waybill?> GetWaybillForEditAsync(int waybillId)
+        public async Task<Waybill?> GetWaybillByIdAsync(int waybillId)
         {
-            var waybill = await _waybillsRepo.GetByIdAsync(waybillId);
-            if (waybill == null) return null;
-
-            // Вручную "подтягиваем" связанные 1-ко-многим детали
-            // (В реальном EF это сделал бы .Include(), но с IBaseRepository делаем так)
-            var allDetails = await _detailsRepo.GetAllAsync();
-            waybill.WaybillDetails = allDetails.Where(d => d.WaybillId == waybillId).ToList();
-
-            return waybill;
+            return await _waybillsRepo.GetByIdAsync(waybillId);
         }
 
         #region WaybillDetails Management
@@ -84,7 +76,7 @@ namespace WaybillWpf.Services
 
         public async Task IssueWaybillAsync(int waybillId)
         {
-            var waybill = await GetWaybillForEditAsync(waybillId);
+            var waybill = await GetWaybillByIdAsync(waybillId);
             
             // Проверка 1: Существование
             if (waybill == null)
@@ -106,35 +98,49 @@ namespace WaybillWpf.Services
             }
 
             // Все проверки пройдены
-            waybill.WaybillStatus = WaybillStatus.Draft;
+            waybill.WaybillStatus = WaybillStatus.InProgress;
             await _waybillsRepo.UpdateAsync(waybill);
         }
 
         public async Task CompleteWaybillAsync(int waybillId)
         {
-            var waybill = await GetWaybillForEditAsync(waybillId);
+            var waybill = await _waybillsRepo.GetByIdAsync(waybillId);
+            if (waybill == null) throw new Exception("Путевой лист не найден");
 
-            // Проверка 1: Существование
-            if (waybill == null)
-                throw new WaybillFlowException($"Путевой лист с Id={waybillId} не найден.");
-            
-            // Проверка 2: Статус
-            if (waybill.WaybillStatus != WaybillStatus.Draft)
-                throw new WaybillValidationException("Завершить можно только путевой лист в статусе 'Выдан'.");
-
-            // Проверка 3: Заполненность "плеч" (данные по возврату)
-            foreach (var detail in waybill.WaybillDetails)
+            // Проверки
+            if (waybill.WaybillStatus != WaybillStatus.InProgress)
             {
-                if (detail.ArrivalDateTime == DateTime.MinValue || detail.EndMealing <= detail.StartMealing)
-                    throw new WaybillValidationException("Все отрезки пути должны иметь дату возврата и корректный конечный пробег.");
+                throw new Exception("Завершить можно только лист, находящийся в работе (InProgress).");
             }
-            
-            // Все проверки пройдены
+
+            // Проверка: есть ли хоть одна запись о поездке?
+            // (Предполагаем, что репозиторий подгружает Details или мы их проверим отдельно)
+            if (waybill.WaybillDetails == null || !waybill.WaybillDetails.Any())
+            {
+                // Можно попытаться подгрузить детали, если их нет в объекте
+                // Но для простоты считаем, что они должны быть
+                throw new Exception("Нельзя завершить пустой путевой лист. Добавьте детали поездки.");
+            }
+
             waybill.WaybillStatus = WaybillStatus.Completed;
             await _waybillsRepo.UpdateAsync(waybill);
         }
         
         #endregion
+        
+        public async Task ArchiveWaybillAsync(int waybillId)
+        {
+            var waybill = await _waybillsRepo.GetByIdAsync(waybillId);
+            if (waybill == null) throw new Exception("Путевой лист не найден");
+
+            if (waybill.WaybillStatus != WaybillStatus.Completed)
+            {
+                throw new Exception("В архив можно сдать только завершенный (Completed) путевой лист.");
+            }
+
+            waybill.WaybillStatus = WaybillStatus.Archived;
+            await _waybillsRepo.UpdateAsync(waybill);
+        }
         
         public async Task<ICollection<Waybill>> GetWaybillsAsync(int? managerId, WaybillStatus? status)
         {

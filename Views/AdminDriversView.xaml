@@ -1,0 +1,44 @@
+<UserControl x:Class="WaybillWpf.Views.AdminDriversView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:WaybillWpf.Views"
+             mc:Ignorable="d"
+             xmlns:viewmodels="clr-namespace:WaybillWpf.ViewModels.Admin"
+             d:DataContext="{d:DesignInstance Type=viewmodels:AdminDriversViewModel}"
+             d:DesignHeight="450" d:DesignWidth="800">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Заголовок и кнопки -->
+            <RowDefinition Height="*"/>    <!-- Таблица -->
+        </Grid.RowDefinitions>
+
+        <!-- Панель управления -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+            <TextBlock Text="Управление водителями" 
+                       FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,20,0"/>
+            
+            <Button Content="Добавить" Command="{Binding AddDriverCommand}" Width="100" Margin="5"/>
+            <Button Content="Редактировать" Command="{Binding EditDriverCommand}" Width="100" Margin="5"/>
+            <Button Content="Удалить" Command="{Binding DeleteDriverCommand}" Width="100" Margin="5"/>
+            <Button Content="Обновить" Command="{Binding LoadDataCommand}" Width="80" Margin="20,5,5,5"/>
+        </StackPanel>
+
+        <!-- Таблица водителей -->
+        <DataGrid Grid.Row="1" 
+                  ItemsSource="{Binding Drivers}" 
+                  SelectedItem="{Binding SelectedDriverDto}"
+                  AutoGenerateColumns="False"
+                  IsReadOnly="True"
+                  SelectionMode="Single"
+                  CanUserAddRows="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="ФИО" Binding="{Binding DriverName}" Width="*"/>
+                <!-- Предполагаем, что в DriverDto есть эти поля. Если нет - поправь Binding -->
+                <DataGridTextColumn Header="№ ВУ" Binding="{Binding LicenseNumber}" Width="150"/>
+                <DataGridTextColumn Header="Срок ВУ" Binding="{Binding LicenseExpiration, StringFormat='dd.MM.yyyy'}" Width="100"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

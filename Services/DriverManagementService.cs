@@ -3,10 +3,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using WaybillWpf.Core.DTO;
-using WaybillWpf.Core.Entities;
-using WaybillWpf.Core.Enums;
-using WaybillWpf.Core.Interfaces;
+using WaybillWpf.Domain.DTO;
+using WaybillWpf.Domain.Entities;
+using WaybillWpf.Domain.Enums;
+using WaybillWpf.Domain.Interfaces;
 
 namespace WaybillWpf.Services
 {
@@ -15,7 +15,7 @@ namespace WaybillWpf.Services
         private readonly IDriversRepository _driversRepo;
         private readonly IDriverLicensesRepository _licensesRepo;
         private readonly IWaybillsRepository _waybillsRepo;
-
+        
         public DriverManagementService()
         {
             // Получаем зависимости из вашего DI-провайдера
@@ -51,18 +51,9 @@ namespace WaybillWpf.Services
             return dtos;
         }
 
-        /// <summary>
-        /// Получить полную сущность водителя (включая ВУ) для редактирования.
-        /// </summary>
-        public async Task<Driver?> GetDriverForEditAsync(int driverId)
+        public Task<Driver> GetDriverById(int driverId)
         {
-            var driver = await _driversRepo.GetByIdAsync(driverId);
-            if (driver == null) return null;
-
-            // Вручную "подтягиваем" связанную 1-к-1 сущность
-            driver.DriveLicense = (await _licensesRepo.GetAllLicensesBydriverIdAsync(driverId)).FirstOrDefault();
-            
-            return driver;
+            return _driversRepo.GetByIdAsync(driverId);
         }
 
         /// <summary>
@@ -75,7 +66,7 @@ namespace WaybillWpf.Services
             if (driver.Id == 0) // Новый водитель
             {
                 // AddAsync(driver) должен добавить и driver, и связанный driver.DriveLicense
-                // (если EF Core настроен правильно)
+                // (если EF Domain настроен правильно)
                 return await _driversRepo.AddAsync(driver);
             }
             else // Существующий водитель
@@ -116,7 +107,7 @@ namespace WaybillWpf.Services
 
             // 1. Находим ID всех водителей, которые сейчас "Выданы" (на рейсе)
             var unavailableDriverIds = allWaybills
-                .Where(w => w.WaybillStatus == WaybillStatus.Draft)
+                .Where(w => w.WaybillStatus == WaybillStatus.InProgress)
                 .Select(w => w.DriverId)
                 .ToHashSet(); // ToHashSet() - для быстрой проверки
 
@@ -137,7 +128,7 @@ namespace WaybillWpf.Services
 
             // 1. Проверяем бизнес-логику: не на активном рейсе
             bool hasActiveWaybills = allWaybills.Any(w => w.DriverId == driverId && 
-                                                          w.WaybillStatus == WaybillStatus.Draft);
+                                                          w.WaybillStatus != WaybillStatus.InProgress);
             if (hasActiveWaybills)
             {
                 throw new Exception("Нельзя удалить водителя, он находится на активном рейсе.");
