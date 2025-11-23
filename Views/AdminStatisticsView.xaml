@@ -117,8 +117,8 @@
                 <DataGrid ItemsSource="{Binding MileageByCarReport}" AutoGenerateColumns="False" IsReadOnly="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Машина" Binding="{Binding EntityName}" Width="*"/>
-                        <DataGridTextColumn Header="Кол-во поездок" Binding="{Binding TripsCount}" Width="150"/>
-                        <DataGridTextColumn Header="Суммарный пробег (км)" Binding="{Binding TotalDistance, StringFormat=F1}" Width="180" FontWeight="Bold"/>
+                        <DataGridTextColumn Header="Кол-во поездок" Binding="{Binding TotalTrips}" Width="150"/>
+                        <DataGridTextColumn Header="Суммарный пробег (км)" Binding="{Binding TotalMileage, StringFormat=F1}" Width="180" FontWeight="Bold"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>
@@ -128,8 +128,8 @@
                 <DataGrid ItemsSource="{Binding MileageByDriverReport}" AutoGenerateColumns="False" IsReadOnly="True">
                     <DataGrid.Columns>
                         <DataGridTextColumn Header="Водитель" Binding="{Binding EntityName}" Width="*"/>
-                        <DataGridTextColumn Header="Кол-во поездок" Binding="{Binding TripsCount}" Width="150"/>
-                        <DataGridTextColumn Header="Суммарный пробег (км)" Binding="{Binding TotalDistance, StringFormat=F1}" Width="180" FontWeight="Bold"/>
+                        <DataGridTextColumn Header="Кол-во поездок" Binding="{Binding TotalTrips}" Width="150"/>
+                        <DataGridTextColumn Header="Суммарный пробег (км)" Binding="{Binding TotalMileage, StringFormat=F1}" Width="180" FontWeight="Bold"/>
                     </DataGrid.Columns>
                 </DataGrid>
             </TabItem>

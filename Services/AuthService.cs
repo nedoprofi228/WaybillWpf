@@ -10,17 +10,14 @@ public class AuthService : IAuthService
 {
     private readonly IUsersRepository _usersRepository;
 
-    // Используем ваш ServicesProvider для получения репозитория
-    public AuthService()
+    // Используем DI для получения репозитория
+    public AuthService(IUsersRepository usersRepository)
     {
-        _usersRepository =
-            ServicesProvider.GetService<IUsersRepository>()
-            ?? throw new InvalidOperationException("IUsersRepository is not registered.");
+        _usersRepository = usersRepository;
     }
 
     public async Task<User?> LoginAsync(AuthUserData userData)
     {
-        // ⚠️ ВАЖНО: См. замечание о безопасности ниже!
         var user = await _usersRepository.GetUserByNameAndPasswordAsync(
             userData.Name,
             userData.Password

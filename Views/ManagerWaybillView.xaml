@@ -43,7 +43,9 @@
 
                 <StackPanel Grid.Row="2" Orientation="Vertical" Margin="10">
                     <Button Content="Добавить новый" Command="{Binding AddWaybillCommand}" Padding="5"/>
-                    <Button Content="Архивировать" Command="{Binding ArchiveWaybillCommand}" Margin="0,5,0,0"
+                    <Button Content="Удалить черновик"  Command="{Binding DeleteWaybillCommand}" Padding="5" Margin="0,5,0,0"
+                            Visibility="{Binding CanDeleteWaybill, Converter={StaticResource BoolToVis}}"/>
+                    <Button Content="Архивировать" Command="{Binding ArchiveWaybillCommand}"  Padding="5" Margin="0,5,0,0"
                             IsEnabled="{Binding CanArchive}" ToolTip="Можно архивировать только 'Завершенные' листы"/>
                 </StackPanel>
             </Grid>
@@ -91,6 +93,11 @@
 
                     <GroupBox Header="Отрезки пути (Детали)" Margin="0,20,0,0">
                         <StackPanel>
+                            <StackPanel Orientation="Horizontal" Margin="0,5">
+                                <Button Content="Добавить отрезок" Command="{Binding AddNewDetailCommand}" Width="130" />
+                                <Button  Content="Удалить отрезок" Command="{Binding DeleteWaybillDetailCommand}" Margin="5, 0" Width="100"/>
+                            </StackPanel>
+                            
                             <DataGrid ItemsSource="{Binding SelectedWaybill.WaybillDetails}" 
                                       SelectedItem="{Binding SelectedWaybillDetails}"
                                       AutoGenerateColumns="False" IsReadOnly="True" MaxHeight="200">
@@ -101,31 +108,50 @@
                                     <DataGridTextColumn Header="Пробег (Конец)" Binding="{Binding EndMealing}" Width="Auto"/>
                                     <DataGridTextColumn Header="Топливо (Начало)" Binding="{Binding StartRemeaningFuel}" Width="Auto"/>
                                     <DataGridTextColumn Header="Топливо (Конец)" Binding="{Binding EndRemeaningFuel}" Width="Auto"/>
-                                    <DataGridTemplateColumn Header="Действия" Width="Auto" Visibility="{Binding DataContext.CanEditDetails, Converter={StaticResource BoolToVis}, RelativeSource={RelativeSource AncestorType=DataGrid}}">
-                                        <DataGridTemplateColumn.CellTemplate>
-                                            <DataTemplate>
-                                                <Button Content="Удалить" 
-                                                        Command="{Binding DataContext.DeleteWaybillDetailCommand, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                        CommandParameter="{Binding}"
-                                                        Visibility="{Binding DataContext.CanEditDetails, Converter={StaticResource BoolToVis}, RelativeSource={RelativeSource AncestorType=DataGrid}}"
-                                                        Padding="5,2" Margin="2"/>
-                                            </DataTemplate>
-                                        </DataGridTemplateColumn.CellTemplate>
-                                    </DataGridTemplateColumn>
-                                    
                                 </DataGrid.Columns>
                             </DataGrid>
                             
-                            <Border Margin="0,10,0,0" Padding="10" BorderThickness="1" BorderBrush="Green"
-                                    IsEnabled="{Binding CanEditDetails}"
-                                    ToolTip="Добавлять детали можно только в 'Черновик'">
-                                <Grid>
-                                    <TextBlock Text="[Здесь форма для добавления нового отрезка]" Margin="10"/>
-                                    
-                                    <Button Content="Добавить отрезок" Command="{Binding AddNewDetailCommand}" 
-                                            HorizontalAlignment="Right" VerticalAlignment="Bottom" Padding="5"/>
-                                </Grid>
-                            </Border>
+                            
+                            
+                            <GridSplitter Grid.Row="2" Height="5" HorizontalAlignment="Stretch" Background="#DDD" Margin="0,5"/>
+
+        <!-- 3. ТАБЛИЦА ЗАДАНИЙ (НОВАЯ) -->
+        <GroupBox Grid.Row="3" Header="Выполнение задания (Маршрут)">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- Кнопки для заданий -->
+                <StackPanel Orientation="Horizontal" Margin="0,5">
+                    <Button Content="+ Добавить маршрут" Command="{Binding AddTaskCommand}" Width="130" Background="#F0F0F0"/>
+                    <Button Content="Удалить строку" Command="{Binding DeleteTaskCommand}" 
+                            CommandParameter="{Binding SelectedTask}" Margin="5,0" Width="100"/>
+                </StackPanel>
+
+                <!-- Таблица заданий -->
+                <DataGrid Grid.Row="1" 
+                          ItemsSource="{Binding SelectedWaybill.WaybillTasks}"
+                          SelectedItem="{Binding SelectedTask}"
+                          AutoGenerateColumns="False" IsReadOnly="True" SelectionMode="Single">
+                    <DataGrid.Columns>
+                        <!-- Гр. 21 Дата -->
+                        <DataGridTextColumn Header="Дата" Binding="{Binding Date, StringFormat=dd.MM}" Width="60"/>
+                        <!-- Гр. 22 Откуда -->
+                        <DataGridTextColumn Header="Откуда" Binding="{Binding DeparturePoint}" Width="*"/>
+                        <!-- Гр. 23 Куда -->
+                        <DataGridTextColumn Header="Куда" Binding="{Binding ArrivalPoint}" Width="*"/>
+                        <!-- Гр. 24 Пробег -->
+                        <DataGridTextColumn Header="Пробег (км)" Binding="{Binding Mileage}" Width="80"/>
+                        <!-- Гр. 25 Заказчик -->
+                        <DataGridTextColumn Header="Заказчик" Binding="{Binding CustomerName}" Width="120"/>
+                        <!-- Гр. 26 Прочее -->
+                        <DataGridTextColumn Header="Прочее" Binding="{Binding OtherInfo}" Width="100"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Grid>
+        </GroupBox>
                         </StackPanel>
                     </GroupBox>
 

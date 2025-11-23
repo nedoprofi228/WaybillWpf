@@ -93,8 +93,7 @@ namespace WaybillWpf.Services
                     float totalFactFuel = details.Sum(d => d.FuelConsumed);
 
                     // НОРМА: Время * Расход
-                    double totalHours = details.Sum(d => d.InWayTime.TotalHours);
-                    float totalNormFuel = (float)(totalHours * car.FuelRate);
+                    double totalNormFuel = details.Sum(d => d.NormalFuelConsumed);
 
                     return new FuelEfficiencyReportItem
                     {

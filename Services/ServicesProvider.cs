@@ -21,6 +21,7 @@ public class ServicesProvider
         .AddScoped<IUsersRepository, UserRepository>()
         .AddScoped<IWaybillsRepository, WaybillRepository>()
         .AddScoped<IWaybillDetailsRepository, WaybillDetailsRepository>()
+        .AddTransient<IWaybillTasksRepository, WaybillTaskRepository>()
 
         // --- СЕРВИСЫ БИЗНЕС-ЛОГИКИ ---
         .AddScoped<IAuthService, AuthService>() 
@@ -64,6 +65,8 @@ public class ServicesProvider
         .AddTransient<WaybillDetailEditorViewModel>()
         .AddTransient<WaybillDetailEditorView>()
         
+        .AddTransient<WaybillTaskEditorViewModel>()
+        .AddTransient<WaybillTaskEditorView>()
         
         .BuildServiceProvider();
     

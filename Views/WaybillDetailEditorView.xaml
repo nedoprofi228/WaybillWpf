@@ -108,7 +108,7 @@
                 <!-- Левая часть: Ввод Факта -->
                 <StackPanel Grid.Column="0">
                     <TextBlock Text="ФАКТ (вручную)" FontSize="11" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                    <TextBox Text="{Binding FuelConsumedInput, UpdateSourceTrigger=PropertyChanged}" 
+                    <TextBox Text="{Binding FuelConsumedInput,  StringFormat=F2, UpdateSourceTrigger=PropertyChanged}" 
                              Height="30" FontSize="16" FontWeight="Bold" 
                              VerticalContentAlignment="Center" TextAlignment="Center"
                              BorderBrush="Blue" BorderThickness="1"/>

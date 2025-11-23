@@ -44,5 +44,12 @@ namespace WaybillWpf.Domain.Interfaces
     
         // Добавляем этот:
         Task ArchiveWaybillAsync(int waybillId); 
+        
+        Task<WaybillTask> AddTaskAsync(WaybillTask task);
+    
+        Task<bool> UpdateTaskAsync(WaybillTask task);
+    
+        Task<bool> DeleteTaskAsync(int taskId);
+        public Task<bool> DeleteWaybillAsync(int waybillId);
     }
 }

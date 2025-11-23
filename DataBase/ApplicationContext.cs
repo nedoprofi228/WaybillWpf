@@ -20,7 +20,7 @@ public class ApplicationContext: DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Username=postgres;Password=9643;Database=mydatabase7;");
+        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Username=postgres;Password=9643;Database=mydatabase3;");
         
         
         base.OnConfiguring(optionsBuilder);
@@ -35,6 +35,11 @@ public class ApplicationContext: DbContext
         modelBuilder.Entity<Waybill>()
             .HasMany(w => w.WaybillDetails)
             .WithOne(d => d.Waybill);
+        
+        modelBuilder.Entity<Waybill>()
+            .HasMany(w => w.WaybillTasks)
+            .WithOne(d => d.Waybill);
+        
 
         modelBuilder.Entity<User>().HasData(new User()
             {

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.InteropServices.JavaScript;
 
 namespace WaybillWpf.Domain.Entities;
@@ -11,6 +12,6 @@ public class DriveLicense: BaseEntity
     public DateTime IssueDate { get; set; }
     public DateTime ExpirationDate { get; set; }
     
-    public int DriverId { get; set; }
+    [NotMapped]
     public Driver? Driver { get; set; }
 }

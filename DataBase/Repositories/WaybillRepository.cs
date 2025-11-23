@@ -12,6 +12,7 @@ public class WaybillRepository(ApplicationContext context) : BaseRepository<Wayb
             .Include(w => w.User)
             .Include(w => w.Driver)
             .Include(w => w.Car)
+            .Include(w => w.WaybillTasks)
             .ToListAsync();
 
     public override async Task<Waybill?> GetByIdAsync(int id) => await context.Waybills
@@ -19,6 +20,7 @@ public class WaybillRepository(ApplicationContext context) : BaseRepository<Wayb
         .Include(w => w.User)
         .Include(w => w.Driver)
         .Include(w => w.Car)
+        .Include(w => w.WaybillTasks)
         .FirstOrDefaultAsync(w => w.Id == id);
 
     public async Task<ICollection<Waybill>> GetWaybillsByDateRangeAsync(DateTime startDate, DateTime endDate)
@@ -28,6 +30,7 @@ public class WaybillRepository(ApplicationContext context) : BaseRepository<Wayb
             .Include(w => w.User)
             .Include(w => w.Driver)
             .Include(w => w.Car)
+            .Include(w => w.WaybillTasks)
             .Where(w => w.WaybillDetails.Any(d => d.CreatedAt >= startDate && d.CreatedAt <= endDate))
             .ToListAsync();
     }
@@ -39,6 +42,7 @@ public class WaybillRepository(ApplicationContext context) : BaseRepository<Wayb
             .Include(w => w.User)
             .Include(w => w.Driver)
             .Include(w => w.Car)
+            .Include(w => w.WaybillTasks)
             .Where(w => w.UserId == userId &&
                         w.WaybillDetails.Any(d => d.CreatedAt >= startDate && d.CreatedAt <= endDate))
             .ToListAsync();
@@ -51,6 +55,7 @@ public class WaybillRepository(ApplicationContext context) : BaseRepository<Wayb
             .Include(w => w.User)
             .Include(w => w.Driver)
             .Include(w => w.Car)
+            .Include(w => w.WaybillTasks)
             .Where(w => w.UserId == userId)
             .ToListAsync();
     }

@@ -8,13 +8,13 @@ D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\
 WaybillWpf
 none
 false
-TRACE;DEBUG;NET;NET9_0;NETCOREAPP
+TRACE;DEBUG;NET;NET9_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 D:\Programming\Projects\С#\WaybillWpf\App.xaml
-12-1417084670
+13-515784464
 
-761558303193
-2152093135517
-MainWindow.xaml;Views\AdminCarsView.xaml;Views\AdminDriversView.xaml;Views\AdminMainView.xaml;Views\AdminStatisticsView.xaml;Views\CarEditorView.xaml;Views\DriverEditorView.xaml;Views\LoginView.xaml;Views\ManagerWaybillView.xaml;Views\NewWaybillView.xaml;Views\RegistrationView.xaml;Views\WaybillDetailEditorView.xaml;
+81-1271148226
+2141656904976
+MainWindow.xaml;Views\AdminCarsView.xaml;Views\AdminDriversView.xaml;Views\AdminMainView.xaml;Views\AdminStatisticsView.xaml;Views\CarEditorView.xaml;Views\DriverEditorView.xaml;Views\LoginView.xaml;Views\ManagerWaybillView.xaml;Views\NewWaybillView.xaml;Views\RegistrationView.xaml;Views\WaybillDetailEditorView.xaml;Views\WaybillTaskEditorView.xaml;
 
 False
 

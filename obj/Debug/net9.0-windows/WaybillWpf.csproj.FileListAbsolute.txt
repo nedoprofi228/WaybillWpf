@@ -58,3 +58,5 @@ D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\refint\WaybillWp
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.pdb
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.genruntimeconfig.cache
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\ref\WaybillWpf.dll
+D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\WaybillTaskEditorView.g.cs
+D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\WaybillTaskEditorView.baml

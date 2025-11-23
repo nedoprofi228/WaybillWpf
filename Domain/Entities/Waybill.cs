@@ -17,4 +17,5 @@ public class Waybill: BaseEntity
     public WaybillStatus WaybillStatus { get; set; } = WaybillStatus.Draft;
     
     public ICollection<WaybillDetails> WaybillDetails { get; set; } = new List<WaybillDetails>();
+    public ICollection<WaybillTask> WaybillTasks { get; set; } = new List<WaybillTask>();
 }

@@ -77,8 +77,8 @@ namespace WaybillWpf.ViewModels
         }
 
         // --- ФАКТИЧЕСКИЙ РАСХОД (Ввод) ---
-        private float _fuelConsumedInput;
-        public float FuelConsumedInput
+        private double _fuelConsumedInput;
+        public double FuelConsumedInput
         {
             get => _fuelConsumedInput;
             set 
@@ -157,7 +157,7 @@ namespace WaybillWpf.ViewModels
                 EndRemeaningFuel = EndFuel,
                 
                 // Сохраняем введенный руками факт
-                FuelConsumed = FuelConsumedInput
+                FuelConsumed = (float)FuelConsumedInput
             };
 
             RequestClose?.Invoke(true);

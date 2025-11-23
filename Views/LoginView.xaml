@@ -36,7 +36,8 @@
                     Command="{Binding OpenRegistrationCommand}" 
                     Background="White"
                     IsCancel="False" 
-                    MinWidth="80" Margin="5" Padding="5"/>
+                    MinWidth="80" Margin="5" Padding="5"
+                    BorderThickness="0"/>
         </StackPanel>
         
     </Grid>

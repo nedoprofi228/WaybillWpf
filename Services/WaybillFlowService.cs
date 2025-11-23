@@ -14,13 +14,13 @@ namespace WaybillWpf.Services
     {
         private readonly IWaybillsRepository _waybillsRepo;
         private readonly IWaybillDetailsRepository _detailsRepo;
+        private readonly IWaybillTasksRepository _waybillTasksRepo;
 
-        public WaybillFlowService()
+        public WaybillFlowService(IWaybillTasksRepository waybillTasksRepo, IWaybillsRepository waybillsRepo, IWaybillDetailsRepository detailsRepo)
         {
-            _waybillsRepo = ServicesProvider.GetService<IWaybillsRepository>()
-                            ?? throw new InvalidOperationException("IWaybillsRepository is not registered.");
-            _detailsRepo = ServicesProvider.GetService<IWaybillDetailsRepository>()
-                           ?? throw new InvalidOperationException("IWaybillDetailsRepository is not registered.");
+            _waybillsRepo = waybillsRepo;
+            _detailsRepo = detailsRepo;
+            _waybillTasksRepo = waybillTasksRepo;
         }
 
         public async Task<Waybill> CreateDraftWaybillAsync(int managerId, int carId, int driverId)
@@ -86,17 +86,6 @@ namespace WaybillWpf.Services
             if (waybill.WaybillStatus != WaybillStatus.Draft)
                 throw new WaybillValidationException("Выдать можно только путевой лист в статусе 'Черновик'.");
 
-            // Проверка 3: Наличие "плеч" (деталей)
-            if (!waybill.WaybillDetails.Any())
-                throw new WaybillValidationException("Нельзя выдать пустой путевой лист. Добавьте хотя бы один отрезок пути.");
-
-            // Проверка 4: Заполненность "плеч" (данные по выезду)
-            foreach (var detail in waybill.WaybillDetails)
-            {
-                if (detail.DepartureDateTime == DateTime.MinValue || detail.StartMealing <= 0 || detail.StartRemeaningFuel <= 0)
-                    throw new WaybillValidationException("Все отрезки пути должны иметь дату выезда, начальный пробег и начальный остаток топлива.");
-            }
-
             // Все проверки пройдены
             waybill.WaybillStatus = WaybillStatus.InProgress;
             await _waybillsRepo.UpdateAsync(waybill);
@@ -112,16 +101,18 @@ namespace WaybillWpf.Services
             {
                 throw new Exception("Завершить можно только лист, находящийся в работе (InProgress).");
             }
+            
+            // Проверка 3: Наличие "плеч" (деталей)
+            if (!waybill.WaybillDetails.Any())
+                throw new WaybillValidationException("Нельзя выдать пустой путевой лист. Добавьте хотя бы один отрезок пути.");
 
-            // Проверка: есть ли хоть одна запись о поездке?
-            // (Предполагаем, что репозиторий подгружает Details или мы их проверим отдельно)
-            if (waybill.WaybillDetails == null || !waybill.WaybillDetails.Any())
-            {
-                // Можно попытаться подгрузить детали, если их нет в объекте
-                // Но для простоты считаем, что они должны быть
-                throw new Exception("Нельзя завершить пустой путевой лист. Добавьте детали поездки.");
+            // Проверка 4: Заполненность "плеч" (данные по выезду)
+            foreach (var detail in waybill.WaybillDetails)
+            { 
+                if (detail.DepartureDateTime == DateTime.MinValue || detail.StartMealing <= 0 || detail.StartRemeaningFuel <= 0)
+                    throw new WaybillValidationException("Все отрезки пути должны иметь дату выезда, начальный пробег и начальный остаток топлива.");
             }
-
+ 
             waybill.WaybillStatus = WaybillStatus.Completed;
             await _waybillsRepo.UpdateAsync(waybill);
         }
@@ -164,6 +155,39 @@ namespace WaybillWpf.Services
             }
 
             return allWaybills;
+        }
+        
+        public async Task<WaybillTask> AddTaskAsync(WaybillTask task)
+        {
+            if (task.Waybill.WaybillStatus == WaybillStatus.Archived)
+            {
+                    throw new Exception("Нельзя менять архивный лист.");
+            }
+
+            await _waybillTasksRepo.AddAsync(task); // _tasksRepository - это инъекция IWaybillTasksRepository
+            return task;
+        }
+
+        public async Task<bool> UpdateTaskAsync(WaybillTask task)
+        {
+            // Аналогичные проверки...
+            return await _waybillTasksRepo.UpdateAsync(task);
+        }
+
+        public async Task<bool> DeleteTaskAsync(int taskId)
+        {
+            var task = await _waybillTasksRepo.GetByIdAsync(taskId);
+            if (task == null) return false;
+    
+            return await _waybillTasksRepo.DeleteAsync(task);
+        }
+
+        public async Task<bool> DeleteWaybillAsync(int waybillId)
+        {
+            var waybill = await _waybillsRepo.GetByIdAsync(waybillId);
+            if (waybill == null) return false;
+            
+            return await _waybillsRepo.DeleteAsync(waybill);
         }
     }
 }
