@@ -14,13 +14,13 @@ namespace WaybillWpf.ViewModels.Admin
     public class DriverEditorViewModel : BaseViewModel
     {
         private readonly IDriverManagementService _driverService;
-        private Driver _driver = new();
+        private Driver _driver = new("", "", "");
 
         // Свойства водителя
         public string DriverName
         {
-            get => _driver.DriverName;
-            set { _driver.DriverName = value; OnPropertyChanged(); }
+            get => _driver.Login;
+            set { _driver.Login = value; OnPropertyChanged(); }
         }
 
         // Свойства прав (Proxy свойства для UI)

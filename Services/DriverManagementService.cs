@@ -21,7 +21,7 @@ namespace WaybillWpf.Services
                 return new DriverDto
                 {
                     DriverId = d.Id,
-                    DriverName = d.DriverName,
+                    DriverName = d.FullName,
                     LicenseNumber = d.DriveLicense?.LicenseNumber ?? "N/A",
                     LicenseExpiration =  d.DriveLicense?.ExpirationDate ?? DateTime.MinValue
                 };

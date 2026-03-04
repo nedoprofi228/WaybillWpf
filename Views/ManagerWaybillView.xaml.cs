@@ -9,6 +9,7 @@ public partial class ManagerWaybillView : Window
     public ManagerWaybillView(ManagerWaybillViewModel viewModel)
     {
         InitializeComponent();
+        viewModel.CloseAction += () => Close();
         DataContext = viewModel;
     }
 }

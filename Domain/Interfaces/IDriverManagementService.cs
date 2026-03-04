@@ -20,4 +20,5 @@ public interface IDriverManagementService
     Task<ICollection<Driver>> GetAvailableDriversAsync();
     
     Task<bool> DeleteDriverAsync(int driverId); // (с проверкой, что он не на рейсе)
+    
 }

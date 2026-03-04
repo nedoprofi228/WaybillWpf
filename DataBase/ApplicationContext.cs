@@ -8,7 +8,6 @@ public class ApplicationContext: DbContext
 {
     public DbSet<Car> Cars { get; set; }
     public DbSet<DriveLicense> DriveLicenses { get; set; }
-    public DbSet<Driver> Drivers { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Waybill> Waybills { get; set; }
     public DbSet<WaybillDetails> WaybillDetails { get; set; }
@@ -20,7 +19,7 @@ public class ApplicationContext: DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Username=postgres;Password=9643;Database=mydatabase3;");
+        optionsBuilder.UseNpgsql("Host=localhost;Port=5432;Username=postgres;Password=9643;Database=db.db;");
         
         
         base.OnConfiguring(optionsBuilder);
@@ -28,9 +27,13 @@ public class ApplicationContext: DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<User>()
-            .HasMany(u => u.Waybills)
-            .WithOne(w => w.User);
+        modelBuilder.Entity<Driver>()
+            .HasMany(d => d.Waybills)
+            .WithOne(w => w.Driver);
+        
+        modelBuilder.Entity<Logist>()
+            .HasMany(d => d.Waybills)
+            .WithOne(w => w.Logist);
         
         modelBuilder.Entity<Waybill>()
             .HasMany(w => w.WaybillDetails)
@@ -40,13 +43,22 @@ public class ApplicationContext: DbContext
             .HasMany(w => w.WaybillTasks)
             .WithOne(d => d.Waybill);
         
+        modelBuilder.Entity<User>()
+            .HasDiscriminator<string>("UserType") 
+            .HasValue<Admin>("Admin")
+            .HasValue<Driver>("Driver")
+            .HasValue<Logist>("Logist");
 
-        modelBuilder.Entity<User>().HasData(new User()
+        modelBuilder.Entity<Driver>()
+            .HasOne(d => d.DriveLicense)
+            .WithOne() 
+            .HasForeignKey<Driver>(d => d.DriverLicenseId)
+            .OnDelete(DeleteBehavior.Cascade); 
+        
+
+        modelBuilder.Entity<Admin>().HasData(new Admin("Admin", "admin", "admin")
             {
                 Id = 1,
-                Name = "admin",
-                Password = "admin",
-                Role = UserRole.Admin
             }
         );
         

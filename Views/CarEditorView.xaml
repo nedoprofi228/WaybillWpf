@@ -6,11 +6,16 @@
         xmlns:viewmodels="clr-namespace:WaybillWpf.ViewModels.Admin"
         d:DataContext="{d:DesignInstance Type=viewmodels:CarEditorViewModel}"
         mc:Ignorable="d"
-        Title="Редактор автомобиля" Height="250" Width="350"
-        WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
-    
+        Title="Автомобиль" Height="400" Width="400"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize"
+        Background="#F3F4F6" FontFamily="Segoe UI">
+
     <Grid Margin="20">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -19,31 +24,50 @@
             <RowDefinition Height="Auto"/> <!-- Кнопки -->
         </Grid.RowDefinitions>
 
+        <!-- Заголовок -->
+        <TextBlock Grid.Row="0" Text="Данные автомобиля" FontSize="18" FontWeight="Bold" Foreground="#1F2937" Margin="0,0,0,15"/>
+
         <!-- Модель -->
-        <TextBlock Grid.Row="0" Text="Модель автомобиля:" FontWeight="SemiBold"/>
-        <TextBox Grid.Row="1" 
-                 Text="{Binding Model, UpdateSourceTrigger=PropertyChanged}" 
-                 Height="25" Margin="0,5,0,15" VerticalContentAlignment="Center"/>
+        <TextBlock Grid.Row="1" Text="Модель" FontSize="13" FontWeight="SemiBold" Foreground="#4B5563" Margin="0,0,0,5"/>
+        <TextBox Grid.Row="2" Text="{Binding Model, UpdateSourceTrigger=PropertyChanged}" 
+                 Height="35" VerticalContentAlignment="Center" Padding="5" 
+                 BorderBrush="#D1D5DB" BorderThickness="1" Margin="0,0,0,15"/>
+        <!-- Модель -->
+        <TextBlock Grid.Row="3" Text="Гос. номер" FontSize="13" FontWeight="SemiBold" Foreground="#4B5563" Margin="0,0,0,5"/>
+        <TextBox Grid.Row="4" Text="{Binding CarNumber, UpdateSourceTrigger=PropertyChanged}" 
+                 Height="35" VerticalContentAlignment="Center" Padding="5" 
+                 BorderBrush="#D1D5DB" BorderThickness="1" Margin="0,0,0,15"/>
 
         <!-- Расход топлива -->
-        <TextBlock Grid.Row="2" Text="Расход топлива (л/100км):" FontWeight="SemiBold"/>
-        <!-- StringFormat=F2 форматирует число, ограничивая 2 знаками после запятой при отображении -->
-        <TextBox Grid.Row="3" 
-                 Text="{Binding FuelRate, UpdateSourceTrigger=LostFocus, StringFormat=F2}" 
-                 Height="25" Margin="0,5,0,0" VerticalContentAlignment="Center"/>
-        <TextBlock Grid.Row="4" Text="(Используйте точку как разделитель)" 
-                   FontSize="10" Foreground="Gray" VerticalAlignment="Top" Margin="0,2,0,0"/>
+        <TextBlock Grid.Row="5" Text="Расход топлива (л/100км)" FontSize="13" FontWeight="SemiBold" Foreground="#4B5563" Margin="0,0,0,5"/>
+        <TextBox Grid.Row="6" Text="{Binding FuelRate, UpdateSourceTrigger=LostFocus, StringFormat=F2}" 
+                 Height="35" VerticalContentAlignment="Center" Padding="5" 
+                 BorderBrush="#D1D5DB" BorderThickness="1" VerticalAlignment="Top"/>
+        
+        <TextBlock Grid.Row="6" Text="Используйте точку (напр. 8.5)" 
+                   FontSize="11" Foreground="#9CA3AF" VerticalAlignment="Top" Margin="0,40,0,0"/>
 
         <!-- Кнопки -->
-        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
-            <Button Content="Сохранить" 
-                    Command="{Binding SaveCommand}" 
-                    IsDefault="True"
-                    Width="100" Height="30" Margin="0,0,10,0"/>
+        <StackPanel Grid.Row="9" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
+            <Button Content="Сохранить" Command="{Binding SaveCommand}" IsDefault="True"
+                    Background="#3B82F6" Foreground="White" FontWeight="Bold" BorderThickness="0"
+                    Padding="20,8" Margin="0,0,10,0">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
             
-            <Button Content="Отмена" 
-                    IsCancel="True" 
-                    Width="80" Height="30"/>
+            <Button Content="Отмена" IsCancel="True"
+                    Background="White" BorderBrush="#D1D5DB" BorderThickness="1"
+                    Padding="15,8">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="5"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
         </StackPanel>
     </Grid>
 </Window>

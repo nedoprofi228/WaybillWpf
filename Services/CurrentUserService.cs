@@ -14,19 +14,14 @@ public class CurrentUserService: ICurrentUserService
         get => _currentUser;
         set
         {
-            if(value == null)
-                return;
-
-            if (_currentUser != null)
-                throw new UserAlreadyAuthorized();
-            
             _currentUser = value;
         }
     }
     
     public bool IsAuthenticated => CurrentUser != null;
     public bool IsAdmin => CurrentUser?.Role == UserRole.Admin;
-    public bool IsEmployee => CurrentUser?.Role == UserRole.Employee;
+    public bool IsManager => CurrentUser?.Role == UserRole.Manager;
+    public bool IsDriver => CurrentUser?.Role == UserRole.Driver;
     
     public void Logout()
     {

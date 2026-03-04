@@ -3,56 +3,67 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:local="clr-namespace:WaybillWpf.Views"
         xmlns:viewModels="clr-namespace:WaybillWpf.ViewModels"
         mc:Ignorable="d"
         d:DataContext="{d:DesignInstance viewModels:NewWaybillViewModel, IsDesignTimeCreatable=False}"
-        Title="Создание нового путевого листа"
-        WindowStartupLocation="CenterOwner"
-        ResizeMode="NoResize"
-        ShowInTaskbar="False"
-        SizeToContent="Height" Width="400">
+        Title="Новый рейс"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False"
+        SizeToContent="Height" Width="450"
+        Background="#FFFFFF" FontFamily="Segoe UI">
     
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVis"/>
     </Window.Resources>
     
-    <Grid Margin="15">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/> <RowDefinition Height="Auto"/> <RowDefinition Height="Auto"/> <RowDefinition Height="Auto"/> </Grid.RowDefinitions>
+    <Grid>
+        <Grid Margin="25">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/> <!-- Заголовок -->
+                <RowDefinition Height="Auto"/> <!-- Поля -->
+                <RowDefinition Height="Auto"/> <!-- Ошибка -->
+                <RowDefinition Height="Auto"/> <!-- Кнопки -->
+            </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Доступные машины:" Margin="0,0,0,5"/>
-        <ComboBox Grid.Row="0" Margin="0,20,0,5"
-                  ItemsSource="{Binding AvailableCars}"
-                  SelectedItem="{Binding SelectedCar}"
-                  DisplayMemberPath="Model"
-                  IsEnabled="{Binding !IsLoading}"/>
+            <TextBlock Grid.Row="0" Text="Создание путевого листа" FontSize="20" FontWeight="Bold" Foreground="#111827" Margin="0,0,0,20"/>
 
-        <TextBlock Grid.Row="1" Text="Доступные водители:" Margin="0,10,0,5"/>
-        <ComboBox Grid.Row="1" Margin="0,30,0,5"
-                  ItemsSource="{Binding AvailableDrivers}"
-                  SelectedItem="{Binding SelectedDriver}"
-                  DisplayMemberPath="DriverName"
-                  IsEnabled="{Binding !IsLoading}"/>
-        
-        <TextBlock Grid.Row="2" Text="{Binding ErrorMessage}" Foreground="Red" 
-                   Margin="0,10" MinHeight="30" TextWrapping="Wrap"/>
-        
-        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,10,0,0">
-            <Button Content="Создать" 
-                    Command="{Binding CreateCommand}" 
-                    IsDefault="True" 
-                    MinWidth="80" Margin="5" Padding="5"/>
-            <Button Content="Отмена" 
-                    Command="{Binding CancelCommand}" 
-                    IsCancel="True" 
-                    MinWidth="80" Margin="5" Padding="5"/>
-        </StackPanel>
-        
-        <Border Grid.RowSpan="4" Background="#7F000000"
-                Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
-            <TextBlock Text="Загрузка доступных..." HorizontalAlignment="Center" VerticalAlignment="Center" 
-                       Foreground="White" FontSize="16"/>
+            <StackPanel Grid.Row="1">
+                <TextBlock Text="Выберите автомобиль" FontSize="13" FontWeight="SemiBold" Foreground="#4B5563" Margin="0,0,0,5"/>
+                <ComboBox ItemsSource="{Binding AvailableCars}" SelectedItem="{Binding SelectedCar}" DisplayMemberPath="Model" IsEnabled="{Binding !IsLoading}"
+                          Height="40" VerticalContentAlignment="Center" Padding="10,0" Margin="0,0,0,15"/>
+
+                <TextBlock Text="Назначьте водителя" FontSize="13" FontWeight="SemiBold" Foreground="#4B5563" Margin="0,0,0,5"/>
+                <ComboBox ItemsSource="{Binding AvailableDrivers}" SelectedItem="{Binding SelectedDriver}" DisplayMemberPath="FullName" IsEnabled="{Binding !IsLoading}"
+                          Height="40" VerticalContentAlignment="Center" Padding="10,0"/>
+            </StackPanel>
+            
+            <TextBlock Grid.Row="2" Text="{Binding ErrorMessage}" Foreground="#DC2626" 
+                       Margin="0,15" TextWrapping="Wrap" MinHeight="20"/>
+            
+            <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Content="Отмена" Command="{Binding CancelCommand}" IsCancel="True"
+                        Background="White" BorderBrush="#D1D5DB" BorderThickness="1"
+                        Padding="20,10" Margin="0,0,10,0">
+                    <Button.Resources>
+                        <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
+                    </Button.Resources>
+                </Button>
+                
+                <Button Content="Создать лист" Command="{Binding CreateCommand}" IsDefault="True"
+                        Background="#10B981" Foreground="White" FontWeight="Bold" BorderThickness="0"
+                        Padding="20,10">
+                    <Button.Resources>
+                        <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
+                    </Button.Resources>
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <!-- Загрузка (Overlay) -->
+        <Border Background="#80FFFFFF" Visibility="{Binding IsLoading, Converter={StaticResource BoolToVis}}">
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock Text="⌛" FontSize="30" HorizontalAlignment="Center"/>
+                <TextBlock Text="Загрузка данных..." FontWeight="SemiBold" Foreground="#4B5563" Margin="0,10,0,0"/>
+            </StackPanel>
         </Border>
     </Grid>
 </Window>

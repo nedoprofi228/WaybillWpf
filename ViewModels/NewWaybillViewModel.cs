@@ -148,11 +148,10 @@ namespace WaybillWpf.ViewModels
 
             try
             {
-                int managerId = _currentUserService.CurrentUser!.Id;
                 await _waybillFlowService.CreateDraftWaybillAsync(
-                    managerId, 
-                    SelectedCar!.Id, 
-                    SelectedDriver!.Id);
+                    (Logist)_currentUserService.CurrentUser!, 
+                    SelectedCar!, 
+                    SelectedDriver!);
                 
                 // Успех! Сообщаем View, что надо закрыться (с результатом true)
                 RequestClose?.Invoke(true);

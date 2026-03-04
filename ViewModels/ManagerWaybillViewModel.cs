@@ -23,6 +23,8 @@ namespace WaybillWpf.ViewModels
         private readonly ICurrentUserService _currentUserService;
         private readonly IDriverManagementService _driverManagementService;
         private readonly ICarManagementService _carManagementService;
+        private readonly IWaybillStateTransitionsService _waybillStateTransitionsService;
+        private readonly IWaybillDetailsRepository _waybillDetailsRepository;
         
         private ICollection<Driver> _availableDrivers = new List<Driver>();
         private ICollection<Car> _availableCars = new List<Car>();
@@ -53,7 +55,8 @@ namespace WaybillWpf.ViewModels
                 UpdateDetailPanelState();
             }
         }
-
+        
+        // --- Выбранный элемент ---
         private WaybillDetails? _selectedWaybillDetails;
 
         public WaybillDetails? SelectedWaybillDetails
@@ -62,10 +65,8 @@ namespace WaybillWpf.ViewModels
             set
             {
                 _selectedWaybillDetails = value;
-                OnPropertyChanged("SelectedWaybillDetails");
-
-                if (value != null && CanEditDetails)
-                    OnSelectedWaybillDetails();
+                OnPropertyChanged(nameof(SelectedWaybillDetails));
+                EditWaybillDetailCommand.Execute(null);
             }
         }
 
@@ -79,16 +80,17 @@ namespace WaybillWpf.ViewModels
                 _selectedTask = value;
                 OnPropertyChanged(nameof(SelectedTask));
 
-                if (value != null && CanEditDetails)
+                if (value != null && CanEditTask)
                     OnSelectedTask(); // Открываем редактор при клике
             }
         }
 
         // --- Состояние UI ---
-        public bool IsDetailPanelVisible => SelectedWaybill != null;
-        public bool CanEditDetails => SelectedWaybill?.WaybillStatus == WaybillStatus.InProgress; 
+        public bool IsDetailPanelVisible => SelectedWaybill != null; 
+        public bool CanEditTask => SelectedWaybill?.WaybillStatus == WaybillStatus.Draft; 
+        public bool CanEditDetails => SelectedWaybill?.WaybillStatus == WaybillStatus.Accepting; 
         public bool CanIssue => SelectedWaybill?.WaybillStatus == WaybillStatus.Draft;
-        public bool CanComplete => SelectedWaybill?.WaybillStatus == WaybillStatus.InProgress;
+        public bool CanComplete => SelectedWaybill?.WaybillStatus == WaybillStatus.Accepting;
         public bool CanArchive => SelectedWaybill?.WaybillStatus == WaybillStatus.Completed;
         public bool CanDeleteWaybill => SelectedWaybill?.WaybillStatus == WaybillStatus.Draft;
 
@@ -96,40 +98,97 @@ namespace WaybillWpf.ViewModels
         public ICommand LoadCommand { get; }
         public ICommand AddWaybillCommand { get; }
         public ICommand ArchiveWaybillCommand { get; }
-        public ICommand AddNewDetailCommand { get; }
+
         public ICommand IssueWaybillCommand { get; }
         public ICommand CompleteWaybillCommand { get; }
-        public ICommand DeleteWaybillDetailCommand { get; }
+        public ICommand DeclineWaybillCommand { get; }
         public ICommand DeleteWaybillCommand { get; } // Команда удаления черновика (если нужна)
 
         // === НОВЫЕ КОМАНДЫ ===
+        
+        public ICommand EditWaybillDetailCommand { get; }
         public ICommand AddTaskCommand { get; }
         public ICommand DeleteTaskCommand { get; }
+        public ICommand LogOutCommand { get; }
+        
+        public event Action? CloseAction;
 
         // --- Конструктор ---
-        public ManagerWaybillViewModel(IWaybillFlowService waybillFlowService, ICurrentUserService currentUserService, IDriverManagementService driverManagementService, ICarManagementService carManagementService)
+        public ManagerWaybillViewModel(IWaybillFlowService waybillFlowService, ICurrentUserService currentUserService,
+            IDriverManagementService driverManagementService, ICarManagementService carManagementService, 
+            IWaybillStateTransitionsService waybillStateTransitionsService, IWaybillDetailsRepository waybillDetailsRepository)
         {
             _waybillFlowService = waybillFlowService;
             _currentUserService = currentUserService;
             _driverManagementService = driverManagementService;
             _carManagementService = carManagementService;
+            _waybillStateTransitionsService = waybillStateTransitionsService;
+            _waybillDetailsRepository = waybillDetailsRepository;
 
             // Инициализация команд
             LoadCommand = new RelayCommand(async void (_) => await LoadDataAsync());
             AddWaybillCommand = new RelayCommand(async void (_) => await OnAddWaybillAsync());
             ArchiveWaybillCommand = new RelayCommand(async void (_) => await OnArchiveWaybillAsync(), _ => CanArchive);
-            AddNewDetailCommand = new RelayCommand(async void (_) => await OnAddNewDetailAsync(), _ => CanEditDetails);
+           
             IssueWaybillCommand = new RelayCommand(async void (_) => await OnIssueWaybillAsync(), _ => CanIssue);
             CompleteWaybillCommand = new RelayCommand(async void (_) => await OnCompleteWaybillAsync(), _ => CanComplete);
-            DeleteWaybillDetailCommand = new RelayCommand(async void (_) => await OnDeleteWaybillDetailAsync(), _ => CanEditDetails);
+            DeclineWaybillCommand = new RelayCommand(async void (_) => await onDeclineWaybillAsync(), _ => CanComplete);
             DeleteWaybillCommand = new RelayCommand(async void (p) => await OnDeleteWaybillAsync(p)); // Если добавляли
 
             // === Инициализация НОВЫХ команд ===
-            AddTaskCommand = new RelayCommand(async void (_) => await OnAddTaskAsync(), _ => CanEditDetails);
-            DeleteTaskCommand = new RelayCommand(async void (param) => await OnDeleteTaskAsync(param!), _ => CanEditDetails);
+            AddTaskCommand = new RelayCommand(async void (_) => await OnAddTaskAsync(), _ => CanEditTask);
+            DeleteTaskCommand = new RelayCommand(async void (param) => await OnDeleteTaskAsync(param!), _ => CanEditTask);
+            EditWaybillDetailCommand =  new RelayCommand(async void (param) => await EditDetailAsync(), _ => CanEditDetails);
+            
+            LogOutCommand = new RelayCommand(_ => { 
+                ServicesProvider.GetService<CurrentUserService>()?.Logout();
+                ServicesProvider.GetService<LoginView>()?.Show();
+               CloseAction?.Invoke();
+            });
 
             //Загружаем данные при старте
             LoadCommand.Execute(null);
+        }
+
+        private async Task onDeclineWaybillAsync()
+        {
+            
+            if (SelectedWaybill == null) return;
+
+            var result = MessageBox.Show(
+                "Вы уверены, что хотите отклонить этот рейс?\n" +
+                "Убедитесь, что все показания счетчиков и топлива внесены корректно.",
+                "Отклонить рейс",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Question);
+
+            if (result != MessageBoxResult.Yes) return;
+
+            try
+            {
+                var reasonVM = ServicesProvider.GetService<ReasonEditorViewModel>();
+                var reasonView = ServicesProvider.GetService<ReasonEditorView>();
+
+                reasonVM.CloseAction += (result) =>
+                {
+                    reasonView.DialogResult = result;
+                    reasonView.Close();
+                };
+                
+                reasonView.DataContext = reasonVM;
+                reasonView.ShowDialog();
+
+                if (reasonView.DialogResult == false) return;
+                
+                await _waybillStateTransitionsService.DeclineWaybillAsync(SelectedWaybill.Id, reasonVM.RejectionReason);
+                MessageBox.Show("Рейс успешно завершен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+                await LoadDataAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при отклонении: {ex.Message}", "Ошибка", MessageBoxButton.OK,
+                    MessageBoxImage.Error);
+            }
         }
 
         private async Task LoadDataAsync()
@@ -176,42 +235,8 @@ namespace WaybillWpf.ViewModels
             catch(Exception ex) { MessageBox.Show(ex.Message); }
         }
 
-        private async Task OnAddNewDetailAsync()
-        {
-            var vmDetails = ServicesProvider.GetService<WaybillDetailEditorViewModel>();
-            var windowDetails = ServicesProvider.GetService<WaybillDetailEditorView>();
 
-            if (windowDetails == null || vmDetails == null)
-            {
-                MessageBox.Show("Ошибка: нет сервиса или окна");
-                return;
-            }
-
-            // В Initialize теперь передаем 0,0 и расход машины (если обновили метод)
-            // Либо ваш старый вариант:
-            float carRate = SelectedWaybill?.Car?.FuelRate ?? 0;
-            vmDetails.Initialize(SelectedWaybill!, carRate); 
-
-            vmDetails.RequestClose += (_) => windowDetails.Close();
-
-            windowDetails.DataContext = vmDetails;
-            windowDetails.ShowDialog();
-
-            if (vmDetails.ResultDetail == null)
-            {
-                return;
-            }
-
-            try
-            {
-                await _waybillFlowService.AddDetailAsync(vmDetails.ResultDetail);
-                await LoadDataAsync();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Ошибка добавления детали: {ex.Message}");
-            }
-        }
+        
 
         private bool CheckDriverAndCar()
         {
@@ -227,51 +252,6 @@ namespace WaybillWpf.ViewModels
             return true;
         }
 
-        private async void OnSelectedWaybillDetails()
-        {
-            var vmDetails = ServicesProvider.GetService<WaybillDetailEditorViewModel>();
-            var windowDetails = ServicesProvider.GetService<WaybillDetailEditorView>();
-            if (windowDetails == null || vmDetails == null)
-            {
-                MessageBox.Show("Ошибка: нет сервиса или окна");
-                return;
-            }
-
-            // Инициализация
-            float carRate = SelectedWaybill?.Car?.FuelRate ?? 0;
-            vmDetails.Initialize(SelectedWaybill!, SelectedWaybillDetails!);
-            
-            // Заполняем данными из выбранной детали
-            vmDetails.DepartureDateTime = SelectedWaybillDetails!.DepartureDateTime;
-            vmDetails.ArrivalDateTime = SelectedWaybillDetails.ArrivalDateTime;
-            vmDetails.StartMealing = SelectedWaybillDetails.StartMealing;
-            vmDetails.EndMealing = SelectedWaybillDetails.EndMealing;
-            vmDetails.StartFuel = SelectedWaybillDetails.StartRemeaningFuel;
-            vmDetails.EndFuel = SelectedWaybillDetails.EndRemeaningFuel;
-            vmDetails.FuelConsumedInput = SelectedWaybillDetails.FuelConsumed;
-
-
-            vmDetails.RequestClose += (_) => windowDetails.Close();
-
-            windowDetails.DataContext = vmDetails;
-            windowDetails.ShowDialog();
-
-            if (vmDetails.ResultDetail != null)
-            {
-                SelectedWaybillDetails!.StartMealing = vmDetails.ResultDetail.StartMealing;
-                SelectedWaybillDetails.EndMealing = vmDetails.ResultDetail.EndMealing;
-                SelectedWaybillDetails.FuelConsumed = vmDetails.ResultDetail.FuelConsumed;
-                SelectedWaybillDetails.ArrivalDateTime = vmDetails.ResultDetail.ArrivalDateTime;
-                SelectedWaybillDetails.DepartureDateTime = vmDetails.ResultDetail.DepartureDateTime;
-                SelectedWaybillDetails.StartRemeaningFuel = vmDetails.ResultDetail.StartRemeaningFuel;
-                SelectedWaybillDetails.EndRemeaningFuel = vmDetails.ResultDetail.EndRemeaningFuel;
-
-                await _waybillFlowService.UpdateDetailAsync(SelectedWaybillDetails);
-                await LoadDataAsync();
-            }
-
-            SelectedWaybillDetails = null;
-        }
 
         // === НОВЫЕ МЕТОДЫ ДЛЯ ЗАДАНИЙ (СКОПИРОВАНО С ДЕТАЛЕЙ) ===
 
@@ -379,7 +359,7 @@ namespace WaybillWpf.ViewModels
 
             try
             {
-                await _waybillFlowService.IssueWaybillAsync(SelectedWaybill!.Id);
+                await _waybillStateTransitionsService.IssueWaybillAsync(SelectedWaybill!.Id);
                 await LoadDataAsync();
             }
             catch (WaybillValidationException ex)
@@ -407,7 +387,7 @@ namespace WaybillWpf.ViewModels
 
             try
             {
-                await _waybillFlowService.CompleteWaybillAsync(SelectedWaybill.Id);
+                await _waybillStateTransitionsService.CompleteWaybillAsync(SelectedWaybill.Id);
                 MessageBox.Show("Рейс успешно завершен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
                 await LoadDataAsync();
             }
@@ -434,7 +414,7 @@ namespace WaybillWpf.ViewModels
 
             try
             {
-                await _waybillFlowService.ArchiveWaybillAsync(SelectedWaybill.Id);
+                await _waybillStateTransitionsService.ArchiveWaybillAsync(SelectedWaybill.Id);
                 WaybillsList.Remove(SelectedWaybill);
                 SelectedWaybill = null;
 
@@ -447,43 +427,57 @@ namespace WaybillWpf.ViewModels
                     MessageBoxImage.Error);
             }
         }
-
-        private async Task OnDeleteWaybillDetailAsync()
+        
+        private async Task EditDetailAsync()
         {
-            if (SelectedWaybillDetails == null || SelectedWaybill == null)
-                return;
+            if(SelectedWaybillDetails == null) return;
+        
+            var vmDetails = ServicesProvider.GetService<WaybillDetailEditorViewModel>();
+            var windowDetails = ServicesProvider.GetService<WaybillDetailEditorView>();
 
-            var result = MessageBox.Show(
-                "Вы уверены, что хотите удалить этот отрезок пути?",
-                "Подтверждение удаления",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Question);
-
-            if (result != MessageBoxResult.Yes)
+            if (windowDetails == null || vmDetails == null)
+            {
+                MessageBox.Show("Ошибка: нет сервиса или окна");
                 return;
+            }
+
+            // В Initialize теперь передаем 0,0 и расход машины (если обновили метод)
+            // Либо ваш старый вариант:
+            float carRate = SelectedWaybill?.Car?.FuelRate ?? 0;
+            vmDetails.Initialize(SelectedWaybill, SelectedWaybillDetails); 
+
+            vmDetails.RequestClose += (_) => windowDetails.Close();
+
+            windowDetails.DataContext = vmDetails;
+            windowDetails.ShowDialog();
+
+            if (vmDetails.ResultDetail == null)
+            {
+                return;
+            }
 
             try
             {
-                await _waybillFlowService.DeleteDetailAsync(SelectedWaybillDetails.Id);
-                SelectedWaybill.WaybillDetails.Remove(SelectedWaybillDetails);
-                // SelectedWaybill = null; // Не обязательно сбрасывать
-                await LoadDataAsync(); // Лучше перезагрузить
+                await _waybillDetailsRepository.UpdateAsync(vmDetails.ResultDetail);
+                await LoadDataAsync();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Ошибка при удалении отрезка пути: {ex.Message}", "Ошибка", MessageBoxButton.OK,
-                    MessageBoxImage.Error);
+                MessageBox.Show($"Ошибка изменения детали: {ex.Message}");
             }
         }
 
+        
+
         private void UpdateDetailPanelState()
         {
-            OnPropertyChanged(nameof(IsDetailPanelVisible));
-            OnPropertyChanged(nameof(CanEditDetails));
             OnPropertyChanged(nameof(CanIssue));
             OnPropertyChanged(nameof(CanComplete));
             OnPropertyChanged(nameof(CanArchive));
             OnPropertyChanged(nameof(CanDeleteWaybill));
+            OnPropertyChanged(nameof(IsDetailPanelVisible));
+            OnPropertyChanged(nameof(CanEditDetails));
+            OnPropertyChanged(nameof(CanEditTask));
         }
         
     }

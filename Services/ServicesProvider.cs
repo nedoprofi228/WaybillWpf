@@ -15,7 +15,7 @@ public class ServicesProvider
         .AddDbContextFactory<ApplicationContext>()
     
         // --- Репозитории ---
-        .AddScoped<ICarsRepository, CarRepository>()
+        .AddScoped<ICarsRepository>(provider => new CarRepositorySql("Host=localhost;Port=5432;Username=postgres;Password=9643;Database=db.db;", "\"Cars\""))
         .AddScoped<IDriverLicensesRepository, DriverLicenseRepository>()
         .AddScoped<IDriversRepository, DriverRepository>()
         .AddScoped<IUsersRepository, UserRepository>()
@@ -30,6 +30,7 @@ public class ServicesProvider
         .AddScoped<ICarManagementService, CarManagementService>()
         .AddScoped<IWaybillFlowService, WaybillFlowService>()
         .AddScoped<ICurrentUserService, CurrentUserService>()
+        .AddScoped<IWaybillStateTransitionsService, WaybillStateTransitionsService>()
     
         // --- ViewModels & Views ---
         .AddTransient<RegistrationViewModel>()
@@ -53,9 +54,6 @@ public class ServicesProvider
         .AddTransient<CarEditorViewModel>()
         .AddTransient<CarEditorView>()
 
-        .AddTransient<DriverEditorViewModel>()
-        .AddTransient<DriverEditorView>()
-
         .AddTransient<ManagerWaybillViewModel>()
         .AddTransient<ManagerWaybillView>()
 
@@ -67,6 +65,15 @@ public class ServicesProvider
         
         .AddTransient<WaybillTaskEditorViewModel>()
         .AddTransient<WaybillTaskEditorView>()
+        
+        .AddTransient<DriverManagementView>()
+        .AddTransient<DriverManagementViewModel>()
+        
+        .AddTransient<DriverRegistrationViewModel>()
+        .AddTransient<DriverRegistrationView>()
+        
+        .AddTransient<ReasonEditorViewModel>()
+        .AddTransient<ReasonEditorView>()
         
         .BuildServiceProvider();
     

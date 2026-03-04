@@ -1,12 +1,18 @@
 using System.ComponentModel.DataAnnotations;
+using WaybillWpf.Domain.Enums;
 
 namespace WaybillWpf.Domain.Entities;
 
-public class Driver: BaseEntity
+public class Driver: User
 {
-    [Required]
-    public string DriverName { get; set; }
     
     public int DriverLicenseId { get; set; }
     public DriveLicense? DriveLicense { get; set; }
+    
+    public ICollection<Waybill> Waybills { get; set; } = [];
+    
+    public Driver(string fullName, string Login, string password) :
+        base(fullName, Login, password, UserRole.Driver) { }
+    
+    public Driver() {}
 }

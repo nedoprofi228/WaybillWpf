@@ -98,6 +98,7 @@ namespace WaybillWpf.Services
                     return new FuelEfficiencyReportItem
                     {
                         CarModel = car.Model,
+                        CarNumber = car.CarNumber,
                         Distance = details.Sum(d => d.Distance),
                         FactFuel = (float)Math.Round(totalFactFuel, 2),
                         NormFuel = (float)Math.Round(totalNormFuel, 2),
@@ -178,7 +179,7 @@ namespace WaybillWpf.Services
                 }
 
                 // Выбираем, по какому полю группировать
-                string entityName = groupByCar ? car.Model : driver.DriverName;
+                string entityName = groupByCar ? car.CarNumber : driver.FullName;
                 
                 float totalMileage = wb.WaybillDetails.Sum(d => d.EndMealing - d.StartMealing);
                 int totalTrips = wb.WaybillDetails.Count;

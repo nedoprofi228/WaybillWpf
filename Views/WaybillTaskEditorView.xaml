@@ -3,34 +3,71 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:local="clr-namespace:WaybillWpf.Views"
         mc:Ignorable="d"
-        Title="Задание водителю" Height="400" Width="350"
-        WindowStartupLocation="CenterScreen">
-    <Grid Margin="10">
-        <StackPanel>
-            <TextBlock Text="Дата исполнения (гр. 21)" Margin="0,5"/>
-            <DatePicker SelectedDate="{Binding Date}"/>
+        Title="Маршрутный лист" Height="520" Width="400"
+        WindowStartupLocation="CenterScreen" ResizeMode="NoResize" SizeToContent="Height"
+        Background="#FFFFFF" FontFamily="Segoe UI">
 
-            <TextBlock Text="Откуда (гр. 22)" Margin="0,5"/>
-            <TextBox Text="{Binding DeparturePoint}"/>
+    <Grid Margin="25">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Заголовок -->
+            <RowDefinition Height="*"/>    <!-- Поля -->
+            <RowDefinition Height="Auto"/> <!-- Кнопки -->
+        </Grid.RowDefinitions>
 
-            <TextBlock Text="Куда (гр. 23)" Margin="0,5"/>
-            <TextBox Text="{Binding ArrivalPoint}"/>
+        <TextBlock Grid.Row="0" Text="Новое задание на поездку" FontSize="20" FontWeight="Bold" Foreground="#111827" Margin="0,0,0,20"/>
 
-            <TextBlock Text="Пробег, км (гр. 24)" Margin="0,5"/>
-            <TextBox Text="{Binding Mileage}"/>
+        <StackPanel Grid.Row="1">
+            <!-- Дата -->
+            <TextBlock Text="Дата исполнения" FontSize="13" FontWeight="SemiBold" Foreground="#4B5563" Margin="0,0,0,5"/>
+            <DatePicker SelectedDate="{Binding Date}" Height="35" VerticalContentAlignment="Center" Margin="0,0,0,15"/>
 
-            <TextBlock Text="Заказчик (гр. 25)" Margin="0,5"/>
-            <TextBox Text="{Binding CustomerName}"/>
+            <!-- Маршрут (в одном блоке) -->
+            <Grid Margin="0,0,0,15">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="15"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Откуда" FontSize="13" FontWeight="SemiBold" Foreground="#4B5563" Margin="0,0,0,5"/>
+                    <TextBox Text="{Binding DeparturePoint}" Height="35" Padding="5" VerticalContentAlignment="Center"/>
+                </StackPanel>
+                <StackPanel Grid.Column="2">
+                    <TextBlock Text="Куда" FontSize="13" FontWeight="SemiBold" Foreground="#4B5563" Margin="0,0,0,5"/>
+                    <TextBox Text="{Binding ArrivalPoint}" Height="35" Padding="5" VerticalContentAlignment="Center"/>
+                </StackPanel>
+            </Grid>
 
-            <TextBlock Text="Прочие сведения (гр. 26)" Margin="0,5"/>
-            <TextBox Text="{Binding OtherInfo}"/>
+            <!-- Пробег -->
+            <TextBlock Text="Расстояние (км)" FontSize="13" FontWeight="SemiBold" Foreground="#4B5563" Margin="0,0,0,5"/>
+            <TextBox Text="{Binding Mileage}" Height="35" Padding="5" VerticalContentAlignment="Center" Margin="0,0,0,15"/>
 
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-                <Button Content="Сохранить" Command="{Binding SaveCommand}" Width="100" Margin="5"/>
-                <Button Content="Отмена" IsCancel="True" Width="80" Margin="5"/>
-            </StackPanel>
+            <!-- Заказчик -->
+            <TextBlock Text="Заказчик (Организация)" FontSize="13" FontWeight="SemiBold" Foreground="#4B5563" Margin="0,0,0,5"/>
+            <TextBox Text="{Binding CustomerName}" Height="35" Padding="5" VerticalContentAlignment="Center" Margin="0,0,0,15"/>
+
+            <!-- Прочее -->
+            <TextBlock Text="Примечание (Груз, Ответственный)" FontSize="13" FontWeight="SemiBold" Foreground="#4B5563" Margin="0,0,0,5"/>
+            <TextBox Text="{Binding OtherInfo}" Height="60" Padding="5" TextWrapping="Wrap" VerticalContentAlignment="Top" AcceptsReturn="True"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,25,0,0">
+            <Button Content="Отмена" IsCancel="True"
+                    Background="White" BorderBrush="#D1D5DB" BorderThickness="1"
+                    Padding="20,10" Margin="0,0,10,0">
+                <Button.Resources>
+                    <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
+                </Button.Resources>
+            </Button>
+
+            <Button Content="Добавить" Command="{Binding SaveCommand}" IsDefault="True"
+                    Background="#10B981" Foreground="White" FontWeight="Bold" BorderThickness="0"
+                    Padding="25,10">
+                <Button.Resources>
+                    <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
+                </Button.Resources>
+            </Button>
         </StackPanel>
     </Grid>
 </Window>

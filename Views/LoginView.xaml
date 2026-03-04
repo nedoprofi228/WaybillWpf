@@ -3,42 +3,61 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:local="clr-namespace:WaybillWpf.Views"
         mc:Ignorable="d"
         Title="Вход в систему" 
         WindowStartupLocation="CenterScreen"
-        SizeToContent="Height" Width="350"
+        SizeToContent="Height" Width="400"
         ResizeMode="NoResize"
-        UseLayoutRounding="True"
-        TextOptions.TextFormattingMode="Ideal">
-    
-    <Grid Margin="15">
+        Background="#F9FAFB" FontFamily="Segoe UI">
+
+    <Grid Margin="30">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/> <RowDefinition Height="Auto"/> <RowDefinition Height="Auto"/> <RowDefinition Height="Auto"/> </Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/> <!-- Заголовок -->
+            <RowDefinition Height="Auto"/> <!-- Поля -->
+            <RowDefinition Height="Auto"/> <!-- Ошибка -->
+            <RowDefinition Height="Auto"/> <!-- Кнопки -->
+        </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Text="Логин:" Margin="0,0,0,5"/>
-        <TextBox Grid.Row="0" Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" Margin="0,20,0,5" />
-
-        <TextBlock Grid.Row="1" Text="Пароль:" Margin="0,5,0,5"/>
-        <PasswordBox Grid.Row="1" Name="PasswordBox" PasswordChanged="PasswordBox_PasswordChanged" Margin="0,25,0,5"/>
-
-        <TextBlock Grid.Row="2" Text="{Binding ErrorMessage}" Foreground="Red" 
-                   Margin="0,10" MinHeight="30" TextWrapping="Wrap"/>
-
-        <StackPanel Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Center" Margin="0,10,0,0">
-            <Button Content="Войти" 
-                    Background="White"
-                    Command="{Binding LoginCommand}" 
-                    IsDefault="True" 
-                    MinWidth="80" Margin="5" Padding="5"/>
-            
-            <Button Content="Регистрация" 
-                    Command="{Binding OpenRegistrationCommand}" 
-                    Background="White"
-                    IsCancel="False" 
-                    MinWidth="80" Margin="5" Padding="5"
-                    BorderThickness="0"/>
+        <!-- Заголовок -->
+        <StackPanel Grid.Row="0" HorizontalAlignment="Center" Margin="0,0,0,25">
+            <TextBlock Text="Авторизация" FontSize="24" FontWeight="Bold" Foreground="#111827" HorizontalAlignment="Center"/>
+            <TextBlock Text="Введите данные для входа" FontSize="14" Foreground="#6B7280" HorizontalAlignment="Center" Margin="0,5,0,0"/>
         </StackPanel>
-        
+
+        <!-- Поля ввода -->
+        <StackPanel Grid.Row="1">
+            <TextBlock Text="Логин" FontSize="13" FontWeight="SemiBold" Foreground="#374151" Margin="0,0,0,5"/>
+            <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" 
+                     Height="40" VerticalContentAlignment="Center" Padding="10,0"
+                     BorderBrush="#D1D5DB" BorderThickness="1" Margin="0,0,0,15"/>
+
+            <TextBlock Text="Пароль" FontSize="13" FontWeight="SemiBold" Foreground="#374151" Margin="0,0,0,5"/>
+            <PasswordBox Name="PasswordBox" PasswordChanged="PasswordBox_PasswordChanged"
+                         Height="40" VerticalContentAlignment="Center" Padding="10,0"
+                         BorderBrush="#D1D5DB" BorderThickness="1"/>
+        </StackPanel>
+
+        <!-- Ошибка -->
+        <TextBlock Grid.Row="2" Text="{Binding ErrorMessage}" 
+                   Foreground="#DC2626" FontSize="13" TextWrapping="Wrap" 
+                   HorizontalAlignment="Center" TextAlignment="Center"
+                   Margin="0,15" MinHeight="20"/>
+
+        <!-- Кнопки -->
+        <StackPanel Grid.Row="3" Orientation="Vertical">
+            <Button Content="Войти" Command="{Binding LoginCommand}" IsDefault="True"
+                    Background="#3B82F6" Foreground="White" FontWeight="Bold" BorderThickness="0"
+                    Height="40" Cursor="Hand" Margin="0,0,0,10">
+                <Button.Resources>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius" Value="6"/>
+                    </Style>
+                </Button.Resources>
+            </Button>
+            
+            <Button Content="Нет аккаунта? Регистрация" Command="{Binding OpenRegistrationCommand}" 
+                    Background="Transparent" Foreground="#3B82F6" BorderThickness="0"
+                    Cursor="Hand" FontSize="13"/>
+        </StackPanel>
     </Grid>
 </Window>

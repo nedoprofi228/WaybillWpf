@@ -3,6 +3,8 @@ D:\Programming\Projects\С#\WaybillWpf\bin\Debug\net9.0-windows\WaybillWpf.deps.
 D:\Programming\Projects\С#\WaybillWpf\bin\Debug\net9.0-windows\WaybillWpf.runtimeconfig.json
 D:\Programming\Projects\С#\WaybillWpf\bin\Debug\net9.0-windows\WaybillWpf.dll
 D:\Programming\Projects\С#\WaybillWpf\bin\Debug\net9.0-windows\WaybillWpf.pdb
+D:\Programming\Projects\С#\WaybillWpf\bin\Debug\net9.0-windows\LiveCharts.dll
+D:\Programming\Projects\С#\WaybillWpf\bin\Debug\net9.0-windows\LiveCharts.Wpf.dll
 D:\Programming\Projects\С#\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.EntityFrameworkCore.dll
 D:\Programming\Projects\С#\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.EntityFrameworkCore.Abstractions.dll
 D:\Programming\Projects\С#\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.EntityFrameworkCore.Relational.dll
@@ -18,18 +20,22 @@ D:\Programming\Projects\С#\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Extens
 D:\Programming\Projects\С#\WaybillWpf\bin\Debug\net9.0-windows\Npgsql.dll
 D:\Programming\Projects\С#\WaybillWpf\bin\Debug\net9.0-windows\Npgsql.EntityFrameworkCore.PostgreSQL.dll
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.csproj.AssemblyReference.cache
+D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\LoginView.baml
+D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\WaybillTaskEditorView.baml
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\MainWindow.g.cs
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminCarsView.g.cs
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminDriversView.g.cs
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminMainView.g.cs
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminStatisticsView.g.cs
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\CarEditorView.g.cs
-D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\DriverEditorView.g.cs
+D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\DriverManagementView.g.cs
+D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\DriverRegistrationView.g.cs
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\LoginView.g.cs
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\ManagerWaybillView.g.cs
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\NewWaybillView.g.cs
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\RegistrationView.g.cs
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\WaybillDetailEditorView.g.cs
+D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\WaybillTaskEditorView.g.cs
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\App.g.cs
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\GeneratedInternalTypeHelper.g.cs
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf_MarkupCompile.cache
@@ -40,8 +46,8 @@ D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminDrive
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminMainView.baml
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminStatisticsView.baml
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\CarEditorView.baml
-D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\DriverEditorView.baml
-D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\LoginView.baml
+D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\DriverManagementView.baml
+D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\DriverRegistrationView.baml
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\ManagerWaybillView.baml
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\NewWaybillView.baml
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\RegistrationView.baml
@@ -58,5 +64,175 @@ D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\refint\WaybillWp
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.pdb
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.genruntimeconfig.cache
 D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\ref\WaybillWpf.dll
-D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\WaybillTaskEditorView.g.cs
-D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\WaybillTaskEditorView.baml
+D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\ReasonEditorView.g.cs
+D:\Programming\Projects\С#\WaybillWpf\obj\Debug\net9.0-windows\Views\ReasonEditorView.baml
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\WaybillWpf.exe
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\WaybillWpf.deps.json
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\WaybillWpf.runtimeconfig.json
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\WaybillWpf.dll
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\WaybillWpf.pdb
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\LiveCharts.dll
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\LiveCharts.Wpf.dll
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.EntityFrameworkCore.dll
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Extensions.Caching.Abstractions.dll
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Extensions.Caching.Memory.dll
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Extensions.Configuration.Abstractions.dll
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Extensions.DependencyInjection.dll
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Extensions.Logging.dll
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Extensions.Options.dll
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Extensions.Primitives.dll
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\Npgsql.dll
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\bin\Debug\net9.0-windows\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.csproj.AssemblyReference.cache
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\LoginView.baml
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\WaybillTaskEditorView.baml
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\MainWindow.g.cs
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminCarsView.g.cs
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminDriversView.g.cs
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminMainView.g.cs
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminStatisticsView.g.cs
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\CarEditorView.g.cs
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\DriverManagementView.g.cs
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\DriverRegistrationView.g.cs
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\LoginView.g.cs
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\ManagerWaybillView.g.cs
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\NewWaybillView.g.cs
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\ReasonEditorView.g.cs
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\RegistrationView.g.cs
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\WaybillDetailEditorView.g.cs
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\WaybillTaskEditorView.g.cs
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\App.g.cs
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\GeneratedInternalTypeHelper.g.cs
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf_MarkupCompile.cache
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf_MarkupCompile.lref
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\MainWindow.baml
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminCarsView.baml
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminDriversView.baml
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminMainView.baml
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminStatisticsView.baml
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\CarEditorView.baml
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\DriverManagementView.baml
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\DriverRegistrationView.baml
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\ManagerWaybillView.baml
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\NewWaybillView.baml
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\ReasonEditorView.baml
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\RegistrationView.baml
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\Views\WaybillDetailEditorView.baml
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.g.resources
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.AssemblyInfoInputs.cache
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.AssemblyInfo.cs
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.csproj.CoreCompileInputs.cache
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.sourcelink.json
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.csproj.Up2Date
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.dll
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\refint\WaybillWpf.dll
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.pdb
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.genruntimeconfig.cache
+C:\Users\Makuims\Downloads\Telegram Desktop\WaybillWpf (2)\WaybillWpf\obj\Debug\net9.0-windows\ref\WaybillWpf.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\WaybillWpf.exe
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\WaybillWpf.deps.json
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\WaybillWpf.runtimeconfig.json
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\WaybillWpf.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\WaybillWpf.pdb
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Azure.Core.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Azure.Identity.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\LiveCharts.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\LiveCharts.Wpf.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Bcl.AsyncInterfaces.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Data.SqlClient.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.EntityFrameworkCore.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.EntityFrameworkCore.Abstractions.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.EntityFrameworkCore.Relational.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Extensions.Caching.Abstractions.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Extensions.Caching.Memory.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Extensions.Configuration.Abstractions.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Extensions.DependencyInjection.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Extensions.Logging.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Extensions.Logging.Abstractions.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Extensions.Options.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Extensions.Primitives.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Identity.Client.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.Identity.Client.Extensions.Msal.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.IdentityModel.Abstractions.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.IdentityModel.Logging.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.IdentityModel.Protocols.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.IdentityModel.Tokens.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Microsoft.SqlServer.Server.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Npgsql.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\Npgsql.EntityFrameworkCore.PostgreSQL.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\System.ClientModel.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\System.IdentityModel.Tokens.Jwt.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\System.Memory.Data.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\cs\Microsoft.Data.SqlClient.resources.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\de\Microsoft.Data.SqlClient.resources.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\es\Microsoft.Data.SqlClient.resources.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\fr\Microsoft.Data.SqlClient.resources.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\it\Microsoft.Data.SqlClient.resources.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\ja\Microsoft.Data.SqlClient.resources.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\ko\Microsoft.Data.SqlClient.resources.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\pl\Microsoft.Data.SqlClient.resources.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\pt-BR\Microsoft.Data.SqlClient.resources.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\ru\Microsoft.Data.SqlClient.resources.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\tr\Microsoft.Data.SqlClient.resources.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\zh-Hans\Microsoft.Data.SqlClient.resources.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\zh-Hant\Microsoft.Data.SqlClient.resources.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\runtimes\unix\lib\net9.0\Microsoft.Data.SqlClient.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\runtimes\win\lib\net9.0\Microsoft.Data.SqlClient.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\runtimes\win-arm64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\runtimes\win-x64\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\bin\Debug\net9.0-windows\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.csproj.AssemblyReference.cache
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\LoginView.baml
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\WaybillTaskEditorView.baml
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\MainWindow.g.cs
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminCarsView.g.cs
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminDriversView.g.cs
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminMainView.g.cs
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminStatisticsView.g.cs
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\CarEditorView.g.cs
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\DriverManagementView.g.cs
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\DriverRegistrationView.g.cs
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\LoginView.g.cs
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\ManagerWaybillView.g.cs
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\NewWaybillView.g.cs
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\ReasonEditorView.g.cs
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\RegistrationView.g.cs
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\WaybillDetailEditorView.g.cs
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\WaybillTaskEditorView.g.cs
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\App.g.cs
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\GeneratedInternalTypeHelper.g.cs
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf_MarkupCompile.cache
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf_MarkupCompile.lref
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\MainWindow.baml
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminCarsView.baml
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminDriversView.baml
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminMainView.baml
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\AdminStatisticsView.baml
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\CarEditorView.baml
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\DriverManagementView.baml
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\DriverRegistrationView.baml
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\ManagerWaybillView.baml
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\NewWaybillView.baml
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\ReasonEditorView.baml
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\RegistrationView.baml
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\Views\WaybillDetailEditorView.baml
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.g.resources
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.GeneratedMSBuildEditorConfig.editorconfig
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.AssemblyInfoInputs.cache
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.AssemblyInfo.cs
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.csproj.CoreCompileInputs.cache
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.sourcelink.json
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.csproj.Up2Date
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\refint\WaybillWpf.dll
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.pdb
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\WaybillWpf.genruntimeconfig.cache
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\ref\WaybillWpf.dll

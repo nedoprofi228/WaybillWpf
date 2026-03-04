@@ -6,57 +6,144 @@
              xmlns:viewmodels="clr-namespace:WaybillWpf.ViewModels.Admin"
              d:DataContext="{d:DesignInstance Type=viewmodels:AdminCarsViewModel}"
              mc:Ignorable="d" 
-             d:DesignHeight="450" d:DesignWidth="800">
-    
-    <Grid Margin="10">
+             d:DesignHeight="600" d:DesignWidth="1000"
+             Background="#F3F4F6" FontFamily="Segoe UI">
+
+    <UserControl.Resources>
+        <!-- СТИЛЬ КНОПОК -->
+        <Style TargetType="Button" x:Key="ModernBtn">
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="Height" Value="30"/>
+            <Setter Property="Width" Value="100"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.Foreground="White"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.9"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- СТИЛЬ DATAGRID -->
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="RowHeaderWidth" Value="0"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#F3F4F6"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="RowHeight" Value="40"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#F9FAFB"/>
+            <Setter Property="Foreground" Value="#6B7280"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+        </Style>
+
+        <Style TargetType="DataGridCell">
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <Border Padding="{TemplateBinding Padding}" Background="Transparent">
+                            <ContentPresenter VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#EFF6FF"/>
+                    <Setter Property="Foreground" Value="#1E3A8A"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="20">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/> <!-- Панель кнопок -->
-            <RowDefinition Height="*"/>    <!-- Таблица -->
+            <RowDefinition Height="Auto"/> <!-- Хедер -->
+            <RowDefinition Height="*"/>    <!-- Контент -->
         </Grid.RowDefinitions>
 
-        <!-- Панель управления -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-            <TextBlock Text="Парк автомобилей" 
-                       FontSize="20" FontWeight="Bold" 
-                       VerticalAlignment="Center" Margin="0,0,20,0"/>
-            
-            <Button Content="Добавить" Command="{Binding AddCarCommand}" Width="100" Margin="5"/>
-            <Button Content="Редактировать" Command="{Binding EditCarCommand}" Width="100" Margin="5"/>
-            <Button Content="Удалить" Command="{Binding DeleteCarCommand}" Width="100" Margin="5"/>
-            
-            <!-- Кнопка обновления справа -->
-            <Button Content="Обновить" Command="{Binding LoadDataCommand}" Width="80" Margin="20,5,5,5"/>
-        </StackPanel>
+        <!-- 1. ХЕДЕР И КНОПКИ -->
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-        <!-- Таблица машин -->
-        <DataGrid Grid.Row="1" 
-                  ItemsSource="{Binding Cars}" 
-                  SelectedItem="{Binding SelectedCar}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  SelectionMode="Single"
-                  CanUserAddRows="False"
-                  GridLinesVisibility="Horizontal"
-                  HeadersVisibility="Column">
-            
-            <DataGrid.Columns>
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Автопарк" FontSize="24" FontWeight="Bold" Foreground="#111827"/>
+                <TextBlock Text="Справочник автомобилей и норм расхода" FontSize="14" Foreground="#6B7280" Margin="0,2,0,0"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button Content="+ Добавить" Command="{Binding AddCarCommand}" 
+                        Style="{StaticResource ModernBtn}" Background="#10B981" Margin="0,0,10,0"/>
                 
-                <!-- Модель -->
-                <DataGridTextColumn Header="Модель / Гос. номер" Binding="{Binding Model}" Width="*">
-                    <DataGridTextColumn.ElementStyle>
-                        <Style TargetType="TextBlock">
-                            <Setter Property="Padding" Value="5,0"/>
-                            <Setter Property="VerticalAlignment" Value="Center"/>
-                        </Style>
-                    </DataGridTextColumn.ElementStyle>
-                </DataGridTextColumn>
+                <Button Content="✎ Изменить" Command="{Binding EditCarCommand}" 
+                        Style="{StaticResource ModernBtn}" Background="#F59E0B" Margin="0,0,10,0"/>
                 
-                <!-- Расход топлива -->
-                <!-- StringFormat=F2 показывает 2 знака после запятой -->
-                <DataGridTextColumn Header="Норма расхода (л/100км)" 
-                                    Binding="{Binding FuelRate, StringFormat=F2}" 
-                                    Width="180"/>
-            </DataGrid.Columns>
-        </DataGrid>
+                <Button Content="🗑 Удалить" Command="{Binding DeleteCarCommand}" 
+                        Style="{StaticResource ModernBtn}" Background="#EF4444" Margin="0,0,10,0"/>
+
+                <Button Content="↻" ToolTip="Обновить список" Command="{Binding LoadDataCommand}" 
+                        Style="{StaticResource ModernBtn}" Background="#3B82F6" Width="40" Padding="0"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- 2. ТАБЛИЦА В КАРТОЧКЕ -->
+        <Border Grid.Row="1" Background="White" CornerRadius="10">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" ShadowDepth="2" Direction="270" Color="Black" Opacity="0.05"/>
+            </Border.Effect>
+
+            <DataGrid ItemsSource="{Binding Cars}" 
+                      SelectedItem="{Binding SelectedCar}"
+                      SelectionMode="Single">
+                <DataGrid.Columns>
+                    
+                    <!-- Модель -->
+                    <DataGridTextColumn Header="Модель" Binding="{Binding Model}" Width="Auto"/>
+                    <DataGridTextColumn Header="Гос. номер" Binding="{Binding CarNumber}" Width="*"/>
+                    
+                    <!-- Расход топлива (с красивым бейджем) -->
+                    <DataGridTemplateColumn Header="Норма расхода (л/100км)" Width="200">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Background="#FEF3C7" CornerRadius="12" Padding="10,2" HorizontalAlignment="Left">
+                                    <TextBlock Text="{Binding FuelRate, StringFormat=F2}" 
+                                               Foreground="#D97706" FontWeight="Bold"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
     </Grid>
 </UserControl>

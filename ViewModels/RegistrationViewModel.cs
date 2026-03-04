@@ -1,13 +1,18 @@
 // В папке ViewModels/
 using System;
+using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
-using WaybillWpf.Domain.DTO; // Для AuthUserData
+using WaybillWpf.Domain.DTO;
+using WaybillWpf.Domain.Entities;
+using WaybillWpf.Domain.Enums; // Для AuthUserData
 using WaybillWpf.Domain.Interfaces;
 using WaybillWpf.ViewModels.Common; // Для RelayCommand
 using WaybillWpf.Services; // Для ServicesProvider
 using WaybillWpf.ViewModels.Base;
 using WaybillWpf.Views;
+using WaybillWpf.Views.Admin;
 
 namespace WaybillWpf.ViewModels
 {
@@ -17,6 +22,7 @@ namespace WaybillWpf.ViewModels
         private readonly ICurrentUserService _currentUserService;
 
         private string _username = string.Empty;
+        private string _login = string.Empty;
         private string _password = string.Empty;
         private string _confirmPassword = string.Empty;
         private string _errorMessage = string.Empty;
@@ -34,6 +40,16 @@ namespace WaybillWpf.ViewModels
             {
                 _username = value;
                 OnPropertyChanged(nameof(Username));
+            }
+        }
+        
+        public string Login
+        {
+            get => _login;
+            set
+            {
+                _login = value;
+                OnPropertyChanged(nameof(Login));
             }
         }
 
@@ -79,12 +95,14 @@ namespace WaybillWpf.ViewModels
             }
         }
 
+
         #endregion
 
         #region Commands
 
         public ICommand RegisterCommand { get; }
         public ICommand ToLoginCommand { get; }
+        public ICommand ToAuthDriverCommand { get; }
 
         #endregion
 
@@ -96,6 +114,7 @@ namespace WaybillWpf.ViewModels
             
             RegisterCommand = new RelayCommand(async _ => await OnRegisterAsync(), _ => CanRegister());
             ToLoginCommand = new RelayCommand(_ => ToLogin());
+            ToAuthDriverCommand = new RelayCommand(_ => ToRegisterDriver());
         }
 
         private async Task OnRegisterAsync()
@@ -106,27 +125,22 @@ namespace WaybillWpf.ViewModels
             IsRegistering = true;
             try
             {
-                var authData = new AuthUserData
-                {
-                    Name = this.Username,
-                    Password = this.Password
-                };
-                
+                var authData = new Logist(Username, Login, Password);
+
                 // Используем ваш AuthService
                 var newUser = await _authService.RegisterAsync(authData);
 
-                if (newUser != null)
+                if (newUser == null)
                 {
-                    _currentUserService.CurrentUser = newUser;
-                    var managerWaybillWindow = ServicesProvider.GetService<ManagerWaybillView>();
-                    managerWaybillWindow?.Show();
-                    CloseAction?.Invoke(); 
-                }
-                else
-                {
-                    // (Исходя из вашей реализации RegisterAsync)
                     ErrorMessage = "Пользователь с таким именем уже существует.";
+                    return;
                 }
+                
+                _currentUserService.CurrentUser = newUser;
+                Window mainWindow = ServicesProvider.GetService<ManagerWaybillView>();
+
+                mainWindow.Show();
+                CloseAction?.Invoke();
             }
             catch (Exception ex)
             {
@@ -141,6 +155,13 @@ namespace WaybillWpf.ViewModels
         private void ToLogin()
         {
             var loginView = ServicesProvider.GetService<LoginView>();
+            loginView?.Show();
+            CloseAction?.Invoke();
+        }
+
+        private void ToRegisterDriver()
+        {
+            var loginView = ServicesProvider.GetService<DriverRegistrationView>();
             loginView?.Show();
             CloseAction?.Invoke();
         }

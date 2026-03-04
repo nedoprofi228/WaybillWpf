@@ -3,42 +3,137 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             xmlns:local="clr-namespace:WaybillWpf.Views"
-             mc:Ignorable="d"
              xmlns:viewmodels="clr-namespace:WaybillWpf.ViewModels.Admin"
              d:DataContext="{d:DesignInstance Type=viewmodels:AdminDriversViewModel}"
-             d:DesignHeight="450" d:DesignWidth="800">
-    <Grid Margin="10">
+             mc:Ignorable="d"
+             d:DesignHeight="600" d:DesignWidth="1000"
+             Background="#F3F4F6" FontFamily="Segoe UI">
+
+    <UserControl.Resources>
+        <!-- СТИЛЬ КНОПОК -->
+        <Style TargetType="Button" x:Key="ModernBtn">
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="FontSize" Value="13"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" CornerRadius="6">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" TextElement.Foreground="White"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Opacity" Value="0.9"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Opacity" Value="0.6"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <!-- СТИЛЬ DATAGRID -->
+        <Style TargetType="DataGrid">
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="RowHeaderWidth" Value="0"/>
+            <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#F3F4F6"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="AutoGenerateColumns" Value="False"/>
+            <Setter Property="CanUserAddRows" Value="False"/>
+            <Setter Property="RowHeight" Value="40"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+
+        <Style TargetType="DataGridColumnHeader">
+            <Setter Property="Background" Value="#F9FAFB"/>
+            <Setter Property="Foreground" Value="#6B7280"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Padding" Value="12"/>
+            <Setter Property="BorderThickness" Value="0,0,0,1"/>
+            <Setter Property="BorderBrush" Value="#E5E7EB"/>
+        </Style>
+
+        <Style TargetType="DataGridCell">
+            <Setter Property="Padding" Value="12,0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="DataGridCell">
+                        <Border Padding="{TemplateBinding Padding}" Background="Transparent">
+                            <ContentPresenter VerticalAlignment="Center" />
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="#EFF6FF"/>
+                    <Setter Property="Foreground" Value="#1E3A8A"/>
+                    <Setter Property="BorderThickness" Value="0"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Margin="20">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/> <!-- Заголовок и кнопки -->
-            <RowDefinition Height="*"/>    <!-- Таблица -->
+            <RowDefinition Height="Auto"/> <!-- Хедер -->
+            <RowDefinition Height="*"/>    <!-- Контент -->
         </Grid.RowDefinitions>
 
-        <!-- Панель управления -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-            <TextBlock Text="Управление водителями" 
-                       FontSize="20" FontWeight="Bold" VerticalAlignment="Center" Margin="0,0,20,0"/>
-            
-            <Button Content="Добавить" Command="{Binding AddDriverCommand}" Width="100" Margin="5"/>
-            <Button Content="Редактировать" Command="{Binding EditDriverCommand}" Width="100" Margin="5"/>
-            <Button Content="Удалить" Command="{Binding DeleteDriverCommand}" Width="100" Margin="5"/>
-            <Button Content="Обновить" Command="{Binding LoadDataCommand}" Width="80" Margin="20,5,5,5"/>
-        </StackPanel>
+        <!-- 1. ХЕДЕР И КНОПКИ -->
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-        <!-- Таблица водителей -->
-        <DataGrid Grid.Row="1" 
-                  ItemsSource="{Binding Drivers}" 
-                  SelectedItem="{Binding SelectedDriverDto}"
-                  AutoGenerateColumns="False"
-                  IsReadOnly="True"
-                  SelectionMode="Single"
-                  CanUserAddRows="False">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ФИО" Binding="{Binding DriverName}" Width="*"/>
-                <!-- Предполагаем, что в DriverDto есть эти поля. Если нет - поправь Binding -->
-                <DataGridTextColumn Header="№ ВУ" Binding="{Binding LicenseNumber}" Width="150"/>
-                <DataGridTextColumn Header="Срок ВУ" Binding="{Binding LicenseExpiration, StringFormat='dd.MM.yyyy'}" Width="100"/>
-            </DataGrid.Columns>
-        </DataGrid>
+            <StackPanel VerticalAlignment="Center">
+                <TextBlock Text="Управление водителями" FontSize="24" FontWeight="Bold" Foreground="#111827"/>
+                <TextBlock Text="Список сотрудников и их документов" FontSize="14" Foreground="#6B7280" Margin="0,2,0,0"/>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                <Button Content="↻ Обновить" Command="{Binding LoadDataCommand}" 
+                        Style="{StaticResource ModernBtn}" Background="#3B82F6" Margin="0,0,10,0" Height="30" Width="100"/>
+                
+                <Button Content="🗑 Удалить" Command="{Binding DeleteDriverCommand}" 
+                        Style="{StaticResource ModernBtn}" Background="#EF4444" Height="30" Width="100"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- 2. ТАБЛИЦА В КАРТОЧКЕ -->
+        <Border Grid.Row="1" Background="White" CornerRadius="10">
+            <Border.Effect>
+                <DropShadowEffect BlurRadius="15" ShadowDepth="2" Direction="270" Color="Black" Opacity="0.05"/>
+            </Border.Effect>
+            
+            <!-- DataGrid с закруглением углов требует ClipToBounds или вложенный Border, но для простоты оставим так -->
+            <DataGrid ItemsSource="{Binding Drivers}" 
+                      SelectedItem="{Binding SelectedDriverDto}"
+                      SelectionMode="Single">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="ФИО Водителя" Binding="{Binding DriverName}" Width="*"/>
+                    
+                    <DataGridTextColumn Header="Номер ВУ" Binding="{Binding LicenseNumber}" Width="200"/>
+                    
+                    <DataGridTemplateColumn Header="Срок действия ВУ" Width="180">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Border Background="#F3F4F6" CornerRadius="4" Padding="8,2" HorizontalAlignment="Left">
+                                    <TextBlock Text="{Binding LicenseExpiration, StringFormat='dd.MM.yyyy'}" 
+                                               Foreground="#374151" FontWeight="Medium"/>
+                                </Border>
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
     </Grid>
 </UserControl>

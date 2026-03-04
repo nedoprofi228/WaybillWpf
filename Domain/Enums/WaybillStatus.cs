@@ -4,6 +4,8 @@ public enum WaybillStatus
 {
     Draft,
     InProgress,
+    Accepting,
     Completed,
+    Declinede,
     Archived,
 }

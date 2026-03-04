@@ -16,11 +16,11 @@ public class AuthService : IAuthService
         _usersRepository = usersRepository;
     }
 
-    public async Task<User?> LoginAsync(AuthUserData userData)
+    public async Task<User?> LoginAsync(User newUser)
     {
         var user = await _usersRepository.GetUserByNameAndPasswordAsync(
-            userData.Name,
-            userData.Password
+            newUser.Login,
+            newUser.Password
         );
 
         if (user == null)
@@ -31,24 +31,17 @@ public class AuthService : IAuthService
         return user;
     }
 
-    public async Task<User?> RegisterAsync(AuthUserData newUserData)
+    public async Task<User?> RegisterAsync(User newUser)
     {
         if (
             await _usersRepository.GetUserByNameAndPasswordAsync(
-                newUserData.Name,
-                newUserData.Password
+                newUser.Login,
+                newUser.Password
             ) != null
         )
         {
             return null;
         }
-
-        User newUser = new User()
-        {
-            Name = newUserData.Name,
-            Password = newUserData.Password,
-            Role = UserRole.Employee,
-        };
 
         await _usersRepository.AddAsync(newUser);
 

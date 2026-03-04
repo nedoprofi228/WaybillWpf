@@ -30,11 +30,11 @@ public class WaybillDetails : BaseEntity
     [NotMapped]
     public double NormalFuelConsumed => 
         Waybill?.Car != null 
-            ? InWayTime.TotalHours * Waybill.Car.FuelRate 
+            ? Distance * (Waybill.Car.FuelRate/100)
             : 0;
 
     [NotMapped]
-    public TimeSpan InWayTime => ArrivalDateTime - DepartureDateTime;
+    public TimeSpan InWayTime => (ArrivalDateTime - DepartureDateTime).Duration();
 
     [NotMapped]
     public float Distance => EndMealing - StartMealing;

@@ -6,6 +6,7 @@ public class FuelEfficiencyReportItem
     /// Модель автомобиля
     /// </summary>
     public string CarModel { get; set; } = string.Empty;
+    public string CarNumber { get; set; } = string.Empty;
 
     /// <summary>
     /// Общий пробег за период (справочно)

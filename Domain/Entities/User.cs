@@ -7,13 +7,26 @@ namespace WaybillWpf.Domain.Entities;
 public class User: BaseEntity
 {
     [Required]
-    public string Name { get; set; }
+    public string Login { get; set; }
+    [Required]
+    public string FullName { get; set; }
     
     [Required]
     public string Password { get; set; }
     
-    [Required]
+
     public UserRole Role { get; set; }
 
-    public ICollection<Waybill> Waybills { get; set; } = [];
+    public User(string fullName, string login, string password, UserRole role)
+    {
+        Login = login;
+        Password = password;
+        FullName = fullName;
+        Role = role;
+    }
+
+    public User()
+    {
+        
+    }
 }

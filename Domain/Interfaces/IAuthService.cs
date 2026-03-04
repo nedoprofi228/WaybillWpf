@@ -5,6 +5,6 @@ namespace WaybillWpf.Domain.Interfaces;
 
 public interface IAuthService
 {
-    public Task<User?> LoginAsync(AuthUserData userData);
-    public Task<User?> RegisterAsync(AuthUserData userData);
+    public Task<User?> LoginAsync(User userData);
+    public Task<User?> RegisterAsync(User userData);
 }

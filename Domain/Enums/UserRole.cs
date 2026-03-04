@@ -1,8 +1,14 @@
 
+using System.ComponentModel;
+
 namespace WaybillWpf.Domain.Enums;
 
 public enum UserRole
 {
-    Employee,
+    [Description("Логист")]
+    Manager,
     Admin,
+    
+    [Description("Водитель")]
+    Driver
 }

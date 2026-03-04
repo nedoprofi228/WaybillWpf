@@ -1,8 +1,10 @@
-// ViewModels/Admin/AdminStatisticsViewModel.cs
-// ... imports ...
-
+using System;
 using System.Collections.ObjectModel;
+using System.Linq; // Важно для фильтрации
+using System.Threading.Tasks;
 using System.Windows.Input;
+using LiveCharts;
+using LiveCharts.Wpf;
 using WaybillWpf.Domain.DTO;
 using WaybillWpf.Domain.Interfaces;
 using WaybillWpf.ViewModels.Base;
@@ -12,9 +14,8 @@ public class AdminStatisticsViewModel : BaseViewModel
 {
     private readonly IStatisticService _statService;
 
+    // === ФИЛЬТРЫ ===
     private DateTime _startDate;
-    private DateTime _endDate;
-
     public DateTime StartDate
     {
         get => _startDate;
@@ -24,6 +25,8 @@ public class AdminStatisticsViewModel : BaseViewModel
             OnPropertyChanged(); 
         }
     }
+
+    private DateTime _endDate;
     public DateTime EndDate
     {
         get => _endDate;
@@ -34,15 +37,44 @@ public class AdminStatisticsViewModel : BaseViewModel
         }
     }
 
-    // KPI
+    // НОВОЕ: Поле для поиска
+    private string _searchCarModel;
+    public string SearchCarModel
+    {
+        get => _searchCarModel;
+        set
+        {
+            _searchCarModel = value;
+            OnPropertyChanged();
+        }
+    }
+
+    // === KPI ===
     private DashboardKpi? _dashboard;
     public DashboardKpi? Dashboard
     {
         get => _dashboard;
         set { _dashboard = value; OnPropertyChanged(); }
     }
+    
+    // === ГРАФИК ===
+    private SeriesCollection _fuelChartSeries;
+    public SeriesCollection FuelChartSeries
+    {
+        get => _fuelChartSeries;
+        set { _fuelChartSeries = value; OnPropertyChanged(); }
+    }
 
-    // Списки отчетов
+    private string[] _chartLabels;
+    public string[] ChartLabels
+    {
+        get => _chartLabels;
+        set { _chartLabels = value; OnPropertyChanged(); }
+    }
+
+    public Func<double, string> ChartFormatter { get; set; }
+
+    // === СПИСКИ ===
     public ObservableCollection<FuelEfficiencyReportItem> FuelReport { get; set; } = new();
     public ObservableCollection<MileageReportItem> MileageByCarReport { get; set; } = new();
     public ObservableCollection<MileageReportItem> MileageByDriverReport { get; set; } = new();
@@ -54,33 +86,85 @@ public class AdminStatisticsViewModel : BaseViewModel
         _statService = statService;
         LoadStatsCommand = new RelayCommand(async _ => await LoadAsync());
         
-        // Автозагрузка при открытии
-        LoadStatsCommand.Execute(null);
+        ChartFormatter = value => value.ToString("N0");
+        
+        // Значения по умолчанию
         StartDate = DateTime.Today.AddMonths(-1);
-        EndDate =  DateTime.Today;
+        EndDate = DateTime.Today;
+
+        // Автозагрузка
+        LoadStatsCommand.Execute(null);
     }
 
     private async Task LoadAsync()
     {
         try
         {
+            // 1. Загружаем "сырые" данные из сервиса
             Dashboard = await _statService.GetDashboardKpisAsync(StartDate, EndDate);
-
-            var fuel = await _statService.GetFuelEfficiencyReportAsync(StartDate, EndDate);
-            FuelReport = new ObservableCollection<FuelEfficiencyReportItem>(fuel);
-            OnPropertyChanged(nameof(FuelReport));
-
+            var fuelData = await _statService.GetFuelEfficiencyReportAsync(StartDate, EndDate);
             var carStats = await _statService.GetMileageByCarAsync(StartDate, EndDate);
-            MileageByCarReport = new ObservableCollection<MileageReportItem>(carStats);
-            OnPropertyChanged(nameof(MileageByCarReport));
+            var driverStats = await _statService.GetMileageByDriverAsync(StartDate, EndDate); // Водителей обычно не фильтруют по модели машины, оставляем как есть или доработаем при необходимости
 
-            var driverStats = await _statService.GetMileageByDriverAsync(StartDate, EndDate);
+            // 2. === ФИЛЬТРАЦИЯ ПО МОДЕЛИ ===
+            if (!string.IsNullOrWhiteSpace(SearchCarModel))
+            {
+                var filter = SearchCarModel.ToLower().Trim();
+
+                // Фильтруем отчет по топливу (там есть CarModel)
+                fuelData = fuelData
+                    .Where(x => x.CarModel != null && x.CarModel.ToLower().Contains(filter))
+                    .ToList();
+
+                // Фильтруем отчет по пробегу машин (предполагаем, что EntityName это модель или содержит её)
+                carStats = carStats
+                    .Where(x => x.EntityName != null && x.EntityName.ToLower().Contains(filter))
+                    .ToList();
+            }
+
+            // 3. Заполняем ObservableCollections отфильтрованными данными
+            FuelReport = new ObservableCollection<FuelEfficiencyReportItem>(fuelData);
+            MileageByCarReport = new ObservableCollection<MileageReportItem>(carStats);
             MileageByDriverReport = new ObservableCollection<MileageReportItem>(driverStats);
+            
+            OnPropertyChanged(nameof(FuelReport));
+            OnPropertyChanged(nameof(MileageByCarReport));
             OnPropertyChanged(nameof(MileageByDriverReport));
+
+            // 4. === СТРОИМ ГРАФИК (по отфильтрованным данным) ===
+            
+            // Если данных нет после фильтра - очищаем график
+            if (!fuelData.Any())
+            {
+                ChartLabels = new string[0];
+                FuelChartSeries = new SeriesCollection();
+                return;
+            }
+
+            // Ось X - Названия машин
+            ChartLabels = fuelData.Select(x => x.CarModel).ToArray(); 
+
+            // Столбцы
+            FuelChartSeries = new SeriesCollection
+            {
+                new ColumnSeries
+                {
+                    Title = "Факт (л)",
+                    Values = new ChartValues<float>(fuelData.Select(x => x.FactFuel)),
+                    Fill = System.Windows.Media.Brushes.IndianRed
+                },
+                new ColumnSeries
+                {
+                    Title = "Норма (л)",
+                    Values = new ChartValues<float>(fuelData.Select(x => x.NormFuel)),
+                    Fill = System.Windows.Media.Brushes.CornflowerBlue
+                }
+            };
         }
         catch (Exception ex)
         {
-            System.Windows.MessageBox.Show($"Ошибка загрузки статистики: {ex.Message}");
+            // В реальном проекте лучше использовать сервис диалогов или логирование
+            System.Diagnostics.Debug.WriteLine($"Ошибка: {ex.Message}");
         }
     }
 }

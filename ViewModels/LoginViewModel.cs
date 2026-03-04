@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using WaybillWpf.Domain.DTO;
+using WaybillWpf.Domain.Entities;
 using WaybillWpf.Domain.Enums;
 using WaybillWpf.Domain.Interfaces;
 using WaybillWpf.ViewModels.Common; // Убедитесь, что RelayCommand здесь
@@ -109,9 +110,9 @@ namespace WaybillWpf.ViewModels
 
             try
             {
-                var authData = new AuthUserData
+                var authData = new User()
                 {
-                    Name = this.Username,
+                    Login = this.Username,
                     Password = this.Password
                 };
 
@@ -133,8 +134,12 @@ namespace WaybillWpf.ViewModels
                     case UserRole.Admin:
                         newWindow = ServicesProvider.GetService<AdminMainView>();
                         break;
-                    case UserRole.Employee:
+                    case UserRole.Manager:
                         newWindow = ServicesProvider.GetService<ManagerWaybillView>();
+                        break;
+                    
+                    case UserRole.Driver:
+                        newWindow = ServicesProvider.GetService<DriverManagementView>();
                         break;
                 }
 

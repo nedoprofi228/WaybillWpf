@@ -17,6 +17,11 @@ namespace WaybillWpf.ViewModels.Admin
             get => _car.Model;
             set { _car.Model = value; OnPropertyChanged(); }
         }
+        public string CarNumber
+        {
+            get => _car.CarNumber;
+            set { _car.CarNumber = value; OnPropertyChanged(); }
+        }
 
         public float FuelRate
         {
@@ -40,6 +45,7 @@ namespace WaybillWpf.ViewModels.Admin
             _car = car;
             OnPropertyChanged(nameof(Model));
             OnPropertyChanged(nameof(FuelRate));
+            OnPropertyChanged(nameof(CarNumber));
         }
 
         private async Task SaveAsync()

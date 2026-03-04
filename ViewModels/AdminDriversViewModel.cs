@@ -77,7 +77,7 @@ namespace WaybillWpf.ViewModels.Admin
         private async Task OnAddAsync()
         {
             // При добавлении передаем пустую сущность Driver
-            await OpenEditorAsync(new Driver());
+            await OpenEditorAsync(new Driver("", "", ""));
         }
 
         private async Task OnEditAsync()
@@ -105,7 +105,7 @@ namespace WaybillWpf.ViewModels.Admin
             editorVm.Initialize(driver);
 
             // 2. Создаем View и привязываем контекст
-            var window = ServicesProvider.GetService<DriverEditorView>(); 
+            var window = ServicesProvider.GetService<DriverRegistrationView>(); 
             window.DataContext = editorVm;
 
             // Подписываемся на закрытие окна из VM

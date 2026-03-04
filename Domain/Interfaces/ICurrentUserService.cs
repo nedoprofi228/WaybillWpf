@@ -9,7 +9,8 @@ public interface ICurrentUserService
     
     public bool IsAuthenticated {get;}
     public bool IsAdmin { get; }
-    public bool IsEmployee { get; }
+    public bool IsManager { get; }
+    public bool IsDriver { get; }
     
     public void Logout();
 }
