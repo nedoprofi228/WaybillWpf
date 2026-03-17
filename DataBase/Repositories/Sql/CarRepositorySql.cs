@@ -14,7 +14,7 @@ class CarRepositorySql(string connectionString, string tableName) : IBaseReposit
             await connection.OpenAsync();
 
             string query = $"""
-                INSERT INTO {tableName} ("Model", "CarNumber", "FuelRate") VALUES (@Model, @CarNumber, @FuelRate)
+                INSERT INTO {tableName} ("Model", "CarNumber", "FuelRate", "FuelTypeId") VALUES (@Model, @CarNumber, @FuelRate, @FuelTypeId)
             """;
 
             await using (var command = connection.CreateCommand())
@@ -23,12 +23,14 @@ class CarRepositorySql(string connectionString, string tableName) : IBaseReposit
                 command.Parameters.AddWithValue("@Model", entity.Model);
                 command.Parameters.AddWithValue("@CarNumber", entity.CarNumber);
                 command.Parameters.AddWithValue("@FuelRate", entity.FuelRate);
+                command.Parameters.AddWithValue("@FuelTypeId", entity.FuelTypeId.HasValue ? entity.FuelTypeId.Value : DBNull.Value);
                 await command.ExecuteNonQueryAsync();
             }
             System.Console.WriteLine("машина добавлена");
             return await Task.FromResult(true);
         }
-        catch(Exception e){
+        catch (Exception e)
+        {
             System.Console.WriteLine(e.Message);
             return await Task.FromResult(false);
         }
@@ -54,7 +56,8 @@ class CarRepositorySql(string connectionString, string tableName) : IBaseReposit
 
             return await Task.FromResult(true);
         }
-        catch(Exception e){
+        catch (Exception e)
+        {
             System.Console.WriteLine(e.Message);
             return await Task.FromResult(false);
         }
@@ -84,7 +87,8 @@ class CarRepositorySql(string connectionString, string tableName) : IBaseReposit
                             Id = (int)reader["Id"],
                             Model = (string)reader["Model"],
                             CarNumber = (string)reader["CarNumber"],
-                            FuelRate = (float)reader["FuelRate"]
+                            FuelRate = (float)reader["FuelRate"],
+                            FuelTypeId = reader["FuelTypeId"] as int?
                         });
                     }
                     return await Task.FromResult(cars);
@@ -96,7 +100,7 @@ class CarRepositorySql(string connectionString, string tableName) : IBaseReposit
             System.Console.WriteLine(e.Message);
             return await Task.FromResult<ICollection<Car>>([]);
         }
-        
+
     }
 
     public async Task<Car?> GetByIdAsync(int id)
@@ -123,7 +127,8 @@ class CarRepositorySql(string connectionString, string tableName) : IBaseReposit
                             Id = (int)reader["Id"],
                             Model = (string)reader["Model"],
                             CarNumber = (string)reader["CarNumber"],
-                            FuelRate = (float)reader["FuelRate"]
+                            FuelRate = (float)reader["FuelRate"],
+                            FuelTypeId = reader["FuelTypeId"] as int?
                         };
                     }
                     return await Task.FromResult<Car?>(null);
@@ -139,19 +144,23 @@ class CarRepositorySql(string connectionString, string tableName) : IBaseReposit
 
     public async Task<bool> UpdateAsync(Car entity)
     {
-        try{
-            using(var connetion = new NpgsqlConnection(connectionString)){
+        try
+        {
+            using (var connetion = new NpgsqlConnection(connectionString))
+            {
                 await connetion.OpenAsync();
 
                 string querry = $"""
-                UPDATE {tableName} SET "Model" = @Model, "CarNumber" = @CarNumber, "FuelRate" = @FuelRate WHERE "Id" = @Id
+                UPDATE {tableName} SET "Model" = @Model, "CarNumber" = @CarNumber, "FuelRate" = @FuelRate, "FuelTypeId" = @FuelTypeId WHERE "Id" = @Id
                 """;
 
-                using(var command = connetion.CreateCommand()){
+                using (var command = connetion.CreateCommand())
+                {
                     command.CommandText = querry;
                     command.Parameters.AddWithValue("@Model", entity.Model);
                     command.Parameters.AddWithValue("@CarNumber", entity.CarNumber);
                     command.Parameters.AddWithValue("@FuelRate", entity.FuelRate);
+                    command.Parameters.AddWithValue("@FuelTypeId", entity.FuelTypeId.HasValue ? entity.FuelTypeId.Value : DBNull.Value);
                     command.Parameters.AddWithValue("@Id", entity.Id);
                     command.ExecuteNonQuery();
                 }

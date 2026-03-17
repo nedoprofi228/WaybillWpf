@@ -29,23 +29,47 @@ namespace WaybillWpf.ViewModels.Admin
             set { _car.FuelRate = value; OnPropertyChanged(); }
         }
 
+        private List<FuelType> _fuelTypes = new();
+        public List<FuelType> FuelTypes
+        {
+            get => _fuelTypes;
+            set { _fuelTypes = value; OnPropertyChanged(); }
+        }
+
+        private FuelType? _selectedFuelType;
+        public FuelType? SelectedFuelType
+        {
+            get => _selectedFuelType;
+            set
+            {
+                _selectedFuelType = value;
+                _car.FuelTypeId = value?.Id;
+                OnPropertyChanged();
+            }
+        }
+
         public event Action<bool>? RequestClose; // Событие для закрытия окна
-        public ICommand SaveCommand { get; }
+        public ICommand SaveCommand { get; set; }
 
         public CarEditorViewModel(ICarManagementService carService)
         {
             _carService = carService;
-            SaveCommand = new RelayCommand(async _ => await SaveAsync(), _ => !string.IsNullOrWhiteSpace(Model));
+            
         }
 
-        public void Initialize(Car car)
+        public void Initialize(Car car, List<FuelType> availableFuelTypes)
         {
             // Клонируем или используем напрямую (лучше клонировать для отмены, но для простоты берем ссылку)
             // Если car существующий, мапим свойства
             _car = car;
+            FuelTypes = availableFuelTypes;
+            SelectedFuelType = availableFuelTypes.FirstOrDefault(f => f.Id == car.FuelTypeId);
+            SaveCommand = new RelayCommand(async _ => await SaveAsync(), _ => !string.IsNullOrWhiteSpace(Model));
+
             OnPropertyChanged(nameof(Model));
             OnPropertyChanged(nameof(FuelRate));
             OnPropertyChanged(nameof(CarNumber));
+            OnPropertyChanged(nameof(SelectedFuelType));
         }
 
         private async Task SaveAsync()

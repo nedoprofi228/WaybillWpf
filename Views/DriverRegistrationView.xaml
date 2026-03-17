@@ -6,7 +6,7 @@
         xmlns:viewmodels="clr-namespace:WaybillWpf.ViewModels.Admin"
         d:DataContext="{d:DesignInstance Type=viewmodels:DriverRegistrationViewModel}"
         mc:Ignorable="d"
-        Title="Редактор водителя" Height="350" Width="400"
+        Title="Регистрация водителя" Height="500" Width="400"
         WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     
     <ScrollViewer>

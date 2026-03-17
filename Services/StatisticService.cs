@@ -23,13 +23,13 @@ namespace WaybillWpf.Services
         {
             _waybillsRepo = ServicesProvider.GetService<IWaybillsRepository>()
                             ?? throw new InvalidOperationException("IWaybillsRepository is not registered.");
-            
+
             _detailsRepo = ServicesProvider.GetService<IWaybillDetailsRepository>()
                            ?? throw new InvalidOperationException("IWaybillDetailsRepository is not registered.");
-            
+
             _carsRepo = ServicesProvider.GetService<ICarsRepository>()
                         ?? throw new InvalidOperationException("ICarsRepository is not registered.");
-            
+
             _driversRepo = ServicesProvider.GetService<IDriversRepository>()
                            ?? throw new InvalidOperationException("IDriversRepository is not registered.");
         }
@@ -54,7 +54,7 @@ namespace WaybillWpf.Services
                 .ToList();
 
             // 3. Считаем KPI
-    
+
 
             // Суммарный пробег (сумма разниц спидометра по всем деталям)
             // Используем свойство Distance из сущности (EndMealing - StartMealing)
@@ -64,11 +64,16 @@ namespace WaybillWpf.Services
             // Используем поле FuelConsumed, которое ввел менеджер
             float totalFuelConsumed = relevantDetails.Sum(d => d.FuelConsumed);
 
+            // Суммарные затраты на топливо (с учетом старых записей, где цена = 0)
+            decimal totalFinancialCost = relevantDetails.Sum(d =>
+                (decimal)d.RefueledAmount * (d.FuelPriceAtRefueling > 0 ? d.FuelPriceAtRefueling : (d.Waybill?.Car?.FuelType?.Price ?? 0m)));
+
             return new DashboardKpi
             {
                 TotalWaybills = waybills.Count(),
                 TotalMileage = (float)Math.Round(totalMileage, 1),
-                TotalFuelConsumed = (float)Math.Round(totalFuelConsumed, 1)
+                TotalFuelConsumed = (float)Math.Round(totalFuelConsumed, 1),
+                TotalFinancialCost = totalFinancialCost
             };
         }
 
@@ -78,12 +83,12 @@ namespace WaybillWpf.Services
         public async Task<ICollection<FuelEfficiencyReportItem>> GetFuelEfficiencyReportAsync(DateTime startDate, DateTime endDate)
         {
             var waybills = (await _waybillsRepo.GetWaybillsByDateRangeAsync(startDate, endDate))
-                .Where(w => w.WaybillStatus == WaybillStatus.Completed || 
+                .Where(w => w.WaybillStatus == WaybillStatus.Completed ||
                             w.WaybillStatus == WaybillStatus.Archived);
 
             var report = waybills
                 .GroupBy(w => w.Car)
-                .Select(group => 
+                .Select(group =>
                 {
                     var car = group.Key;
                     var details = group.SelectMany(w => w.WaybillDetails)
@@ -95,6 +100,14 @@ namespace WaybillWpf.Services
                     // НОРМА: Время * Расход
                     double totalNormFuel = details.Sum(d => d.NormalFuelConsumed);
 
+                    // ЗАТРАТЫ: Фактические затраты
+                    // Если цена в детали 0 (старые записи до добавления Финансов), берем текущую цену типа топлива машины
+                    decimal totalFactCost = details.Sum(d =>
+                        (decimal)d.FuelConsumed * (d.FuelPriceAtRefueling > 0 ? d.FuelPriceAtRefueling : (car.FuelType?.Price ?? 0m)));
+
+                    decimal totalNormCost = details.Sum(d =>
+                        (decimal)d.NormalFuelConsumed * (d.FuelPriceAtRefueling > 0 ? d.FuelPriceAtRefueling : (car.FuelType?.Price ?? 0m)));
+
                     return new FuelEfficiencyReportItem
                     {
                         CarModel = car.Model,
@@ -102,7 +115,11 @@ namespace WaybillWpf.Services
                         Distance = details.Sum(d => d.Distance),
                         FactFuel = (float)Math.Round(totalFactFuel, 2),
                         NormFuel = (float)Math.Round(totalNormFuel, 2),
-                        Difference = (float)Math.Round(totalFactFuel - totalNormFuel, 2) // +Перерасход
+                        Difference = (float)Math.Round(totalFactFuel - totalNormFuel, 2), // +Перерасход
+
+                        FactCost = totalFactCost,
+                        NormCost = totalNormCost,
+                        CostDifference = totalFactCost - totalNormCost
                     };
                 })
                 .ToList();
@@ -137,7 +154,7 @@ namespace WaybillWpf.Services
         {
             // 1. Получаем все "шапки" Waybill за период
             var allWaybills = await _waybillsRepo.GetWaybillsByDateRangeAsync(startDate, endDate);
-            
+
             // 2. Фильтруем "Завершенные"
             var completedWaybills = allWaybills
                 .Where(w => w.WaybillStatus == WaybillStatus.Completed)
@@ -172,7 +189,7 @@ namespace WaybillWpf.Services
             {
                 var car = cars.FirstOrDefault(c => c.Id == wb.CarId);
                 var driver = drivers.FirstOrDefault(d => d.Id == wb.DriverId);
-                
+
                 if (car == null || driver == null || !wb.WaybillDetails.Any())
                 {
                     continue;
@@ -180,10 +197,10 @@ namespace WaybillWpf.Services
 
                 // Выбираем, по какому полю группировать
                 string entityName = groupByCar ? car.CarNumber : driver.FullName;
-                
+
                 float totalMileage = wb.WaybillDetails.Sum(d => d.EndMealing - d.StartMealing);
                 int totalTrips = wb.WaybillDetails.Count;
-                
+
                 mileageData.Add((entityName, totalMileage, totalTrips));
             }
 
@@ -198,7 +215,7 @@ namespace WaybillWpf.Services
                 })
                 .OrderByDescending(r => r.TotalMileage)
                 .ToList();
-            
+
             return groupedReport;
         }
 

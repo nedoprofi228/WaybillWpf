@@ -3,11 +3,13 @@
 FC:\Programming\Projects\C#\WaybillWpf\WaybillWpf\MainWindow.xaml;;
 FC:\Programming\Projects\C#\WaybillWpf\WaybillWpf\Views\AdminCarsView.xaml;;
 FC:\Programming\Projects\C#\WaybillWpf\WaybillWpf\Views\AdminDriversView.xaml;;
+FC:\Programming\Projects\C#\WaybillWpf\WaybillWpf\Views\AdminFuelTypesView.xaml;;
 FC:\Programming\Projects\C#\WaybillWpf\WaybillWpf\Views\AdminMainView.xaml;;
 FC:\Programming\Projects\C#\WaybillWpf\WaybillWpf\Views\AdminStatisticsView.xaml;;
 FC:\Programming\Projects\C#\WaybillWpf\WaybillWpf\Views\CarEditorView.xaml;;
 FC:\Programming\Projects\C#\WaybillWpf\WaybillWpf\Views\DriverManagementView.xaml;;
 FC:\Programming\Projects\C#\WaybillWpf\WaybillWpf\Views\DriverRegistrationView.xaml;;
+FC:\Programming\Projects\C#\WaybillWpf\WaybillWpf\Views\FuelTypeEditorView.xaml;;
 FC:\Programming\Projects\C#\WaybillWpf\WaybillWpf\Views\ManagerWaybillView.xaml;;
 FC:\Programming\Projects\C#\WaybillWpf\WaybillWpf\Views\NewWaybillView.xaml;;
 FC:\Programming\Projects\C#\WaybillWpf\WaybillWpf\Views\ReasonEditorView.xaml;;

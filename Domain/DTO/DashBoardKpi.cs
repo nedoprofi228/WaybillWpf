@@ -16,4 +16,9 @@ public class DashboardKpi
     /// Суммарный расход топлива (ФАКТ, введенный вручную)
     /// </summary>
     public float TotalFuelConsumed { get; set; }
+
+    /// <summary>
+    /// Суммарные затраты на топливо (руб)
+    /// </summary>
+    public decimal TotalFinancialCost { get; set; }
 }

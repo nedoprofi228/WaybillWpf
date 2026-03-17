@@ -12,7 +12,7 @@ using WaybillWpf.Views;
 
 namespace WaybillWpf.ViewModels;
 
-public class DriverManagementViewModel: BaseViewModel
+public class DriverManagementViewModel : BaseViewModel
 {
     private readonly IWaybillDetailsRepository _waybillDetailsRepository;
     private readonly IWaybillsRepository _waybillsRepository;
@@ -31,10 +31,10 @@ public class DriverManagementViewModel: BaseViewModel
             OnPropertyChanged(nameof(IsDetailPanelVisible));
             OnPropertyChanged(nameof(CanEditDetails));
             OnPropertyChanged(nameof(CanAccepting));
-            
+            OnPropertyChanged(nameof(CanEditWaybil));
         }
     }
-    
+
     private WaybillDetails? _selectedWaybillDetails;
 
     public WaybillDetails? SelectedWaybillDetails
@@ -44,6 +44,7 @@ public class DriverManagementViewModel: BaseViewModel
         {
             _selectedWaybillDetails = value;
             OnPropertyChanged(nameof(SelectedWaybillDetails));
+            OnPropertyChanged(nameof(CanEditDetails));
         }
     }
 
@@ -58,11 +59,14 @@ public class DriverManagementViewModel: BaseViewModel
             OnPropertyChanged(nameof(WaybillsList));
         }
     }
+
+    public bool CanEditWaybil => SelectedWaybill != null && (SelectedWaybill?.WaybillStatus == WaybillStatus.InProgress || SelectedWaybill?.WaybillStatus == WaybillStatus.Declinede);
+
+    public bool CanEditDetails => CanEditWaybil && SelectedWaybill!.WaybillDetails.Count > 0 ? SelectedWaybillDetails != null : true;
     
-    public bool CanEditDetails => SelectedWaybill?.WaybillStatus == WaybillStatus.InProgress || SelectedWaybill?.WaybillStatus == WaybillStatus.Declinede;
-    public bool CanAccepting => CanEditDetails && (bool)SelectedWaybill?.WaybillDetails.Any();
+    public bool CanAccepting => CanEditWaybil && (bool)SelectedWaybill?.WaybillDetails.Any();
     public bool IsDetailPanelVisible => SelectedWaybill != null;
-    
+
     public ICommand AddNewDetailCommand { get; }
     public ICommand EditDetailCommand { get; }
     public ICommand DeleteWaybillDetailCommand { get; }
@@ -72,7 +76,7 @@ public class DriverManagementViewModel: BaseViewModel
     public event Action? CloseAction;
 
     public DriverManagementViewModel(
-        IWaybillStateTransitionsService waybillStateTransitionsService, 
+        IWaybillStateTransitionsService waybillStateTransitionsService,
         IWaybillDetailsRepository waybillDetailsRepository,
         ICurrentUserService currentUserService,
         IWaybillsRepository waybillsRepository)
@@ -81,22 +85,23 @@ public class DriverManagementViewModel: BaseViewModel
         _waybillsRepository = waybillsRepository;
         _currentUserService = currentUserService;
         _WaybillStateTransitionsService = waybillStateTransitionsService;
-        
+
         DeleteWaybillDetailCommand = new RelayCommand(async void (_) => await OnDeleteWaybillDetailAsync(), _ => CanEditDetails);
-        AddNewDetailCommand = new RelayCommand(async void (_) => await OnAddNewDetailAsync(), _ => CanEditDetails);
+        AddNewDetailCommand = new RelayCommand(async void (_) => await OnAddNewDetailAsync(), _ => CanEditWaybil);
         EditDetailCommand = new RelayCommand(async void (_) => await EditDetailAsync(), _ => CanEditDetails);
         AcceptingWaybillCommand = new RelayCommand(async void (_) => await AcceptingWaybillAsync(), _ => CanAccepting);
 
-        LogOutCommand = new RelayCommand(_ => { 
+        LogOutCommand = new RelayCommand(_ =>
+        {
             ServicesProvider.GetService<CurrentUserService>()?.Logout();
             ServicesProvider.GetService<LoginView>()?.Show();
-            CloseAction ?.Invoke();
+            CloseAction?.Invoke();
         });
-        
+
         WaybillsList = new ObservableCollection<Waybill>();
         LoadDataAsync();
     }
-    
+
     private async Task OnAddNewDetailAsync()
     {
         var vmDetails = ServicesProvider.GetService<WaybillDetailEditorViewModel>();
@@ -111,7 +116,8 @@ public class DriverManagementViewModel: BaseViewModel
         // В Initialize теперь передаем 0,0 и расход машины (если обновили метод)
         // Либо ваш старый вариант:
         float carRate = SelectedWaybill?.Car?.FuelRate ?? 0;
-        vmDetails.Initialize(SelectedWaybill!, carRate); 
+        decimal fuelPrice = SelectedWaybill?.Car?.FuelType?.Price ?? 0;
+        vmDetails.Initialize(SelectedWaybill!, carRate, fuelPrice);
 
         vmDetails.RequestClose += (_) => windowDetails.Close();
 
@@ -136,8 +142,8 @@ public class DriverManagementViewModel: BaseViewModel
 
     private async Task EditDetailAsync()
     {
-        if(SelectedWaybillDetails == null) return;
-        
+        if (SelectedWaybillDetails == null) return;
+
         var vmDetails = ServicesProvider.GetService<WaybillDetailEditorViewModel>();
         var windowDetails = ServicesProvider.GetService<WaybillDetailEditorView>();
 
@@ -148,7 +154,7 @@ public class DriverManagementViewModel: BaseViewModel
         }
 
         float carRate = SelectedWaybill?.Car?.FuelRate ?? 0;
-        vmDetails.Initialize(SelectedWaybill, SelectedWaybillDetails); 
+        vmDetails.Initialize(SelectedWaybill, SelectedWaybillDetails);
 
         vmDetails.RequestClose += (_) => windowDetails.Close();
 
@@ -156,7 +162,7 @@ public class DriverManagementViewModel: BaseViewModel
         windowDetails.ShowDialog();
 
         if (vmDetails.ResultDetail == null) return;
-        
+
         try
         {
             await _waybillDetailsRepository.UpdateAsync(vmDetails.ResultDetail);
@@ -167,7 +173,7 @@ public class DriverManagementViewModel: BaseViewModel
             MessageBox.Show($"Ошибка изменения детали: {ex.Message}");
         }
     }
-    
+
     private async Task OnDeleteWaybillDetailAsync()
     {
         if (SelectedWaybillDetails == null || SelectedWaybill == null)
@@ -207,16 +213,17 @@ public class DriverManagementViewModel: BaseViewModel
 
         if (result != MessageBoxResult.Yes)
             return;
-        
+
         if (!await _WaybillStateTransitionsService.AcceptingWaybillAsync(SelectedWaybill.Id))
         {
             MessageBox.Show("Не получилось отправить на завершение");
             return;
         }
-        
+
         await LoadDataAsync();
+        OnPropertyChanged(nameof(CanEditWaybil));
     }
-    
+
     private async Task LoadDataAsync()
     {
         if (_currentUserService.CurrentUser == null) return;

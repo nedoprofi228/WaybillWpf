@@ -29,4 +29,21 @@ public class FuelEfficiencyReportItem
     /// Отрицательное значение = Экономия.
     /// </summary>
     public float Difference { get; set; }
+
+    // ФИНАНСЫ
+
+    /// <summary>
+    /// Фактические затраты (Фактический расход * Цена топлива при заправке)
+    /// </summary>
+    public decimal FactCost { get; set; }
+
+    /// <summary>
+    /// Нормативные затраты (Нормативный расход * Цена топлива при заправке)
+    /// </summary>
+    public decimal NormCost { get; set; }
+
+    /// <summary>
+    /// Разница в стоимости: Факт - Норма.
+    /// </summary>
+    public decimal CostDifference { get; set; }
 }

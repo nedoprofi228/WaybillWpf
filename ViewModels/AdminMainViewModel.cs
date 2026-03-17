@@ -20,22 +20,24 @@ namespace WaybillWpf.ViewModels.Admin
             }
         }
 
-        // Команды меню
         public ICommand ShowCarsCommand { get; }
+        public ICommand ShowFuelTypesCommand { get; }
         public ICommand ShowDriversCommand { get; }
         public ICommand ShowStatsCommand { get; }
         public ICommand LogoutCommand { get; }
-        
+
         public event Action? RequestLogOut;
 
         public AdminMainViewModel()
         {
             // При нажатии создаем/достаем нужную VM из контейнера
             ShowCarsCommand = new RelayCommand(_ => CurrentView = ServicesProvider.GetService<AdminCarsViewModel>());
+            ShowFuelTypesCommand = new RelayCommand(_ => CurrentView = ServicesProvider.GetService<AdminFuelTypesViewModel>());
             ShowDriversCommand = new RelayCommand(_ => CurrentView = ServicesProvider.GetService<AdminDriversViewModel>());
             ShowStatsCommand = new RelayCommand(_ => CurrentView = ServicesProvider.GetService<AdminStatisticsViewModel>());
 
-            LogoutCommand = new RelayCommand(_ => { 
+            LogoutCommand = new RelayCommand(_ =>
+            {
                 ServicesProvider.GetService<CurrentUserService>()?.Logout();
                 ServicesProvider.GetService<LoginView>()?.Show();
                 RequestLogOut?.Invoke();

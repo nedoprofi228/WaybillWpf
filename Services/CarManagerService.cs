@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using WaybillWpf.Domain.DTO;
 using WaybillWpf.Domain.Entities;
 using WaybillWpf.Domain.Enums;
@@ -9,20 +10,20 @@ using WaybillWpf.Domain.Interfaces;
 
 namespace WaybillWpf.Services
 {
-    public class CarManagementService(ICarsRepository carsRepository, IWaybillsRepository waybillsRepository) : ICarManagementService
+    public class CarManagementService(ICarsRepository carsRepository, IWaybillsRepository waybillsRepository, IFuelTypesRepository fuelTypesRepository, DataBase.ApplicationContext context) : ICarManagementService
     {
 
-        
+
         public async Task<ICollection<Car>> GetAllCarsAsync()
         {
             return await carsRepository.GetAllAsync();
         }
-        
+
         public async Task<Car?> GetCarByIdAsync(int carId)
         {
             return await carsRepository.GetByIdAsync(carId);
         }
-        
+
         public async Task<bool> SaveCarAsync(Car car)
         {
             if (car == null) return false;
@@ -36,7 +37,7 @@ namespace WaybillWpf.Services
                 return await carsRepository.UpdateAsync(car);
             }
         }
-        
+
         public async Task<ICollection<Car>> GetAvailableCarsAsync()
         {
             var allCars = await carsRepository.GetAllAsync();
@@ -55,7 +56,7 @@ namespace WaybillWpf.Services
 
             return availableCars;
         }
-        
+
         public async Task<bool> DeleteCarAsync(int carId)
         {
             var allWaybills = await waybillsRepository.GetAllAsync();
@@ -67,21 +68,56 @@ namespace WaybillWpf.Services
             {
                 throw new Exception("Нельзя удалить машину, она находится на активном рейсе.");
             }
-            
+
             var car = await carsRepository.GetByIdAsync(carId);
             if (car == null)
             {
                 throw new Exception("Машина не найдена.");
             }
-            
+
             bool deleteSuccess = await carsRepository.DeleteAsync(car);
-            
+
             if (!deleteSuccess)
             {
-                 throw new Exception("Произошла ошибка при удалении.");
+                throw new Exception("Произошла ошибка при удалении.");
             }
-            
+
             return true;
+        }
+
+        public async Task<List<FuelType>> GetFuelTypesAsync()
+        {
+            var types = await fuelTypesRepository.GetAllAsync();
+            return types.ToList();
+        }
+
+        public async Task<bool> SaveFuelTypeAsync(FuelType fuelType)
+        {
+            if (fuelType == null) return false;
+
+            if (fuelType.Id == 0)
+            {
+                return await fuelTypesRepository.AddAsync(fuelType);
+            }
+            else
+            {
+                return await fuelTypesRepository.UpdateAsync(fuelType);
+            }
+        }
+
+        public async Task<bool> DeleteFuelTypeAsync(int fuelTypeId)
+        {
+            var fuelType = await fuelTypesRepository.GetByIdAsync(fuelTypeId);
+            if (fuelType == null) return false;
+
+            // Проверка, используется ли тип топлива в какой-либо машине
+            bool isUsed = await context.Cars.AnyAsync(c => c.FuelTypeId == fuelTypeId);
+            if (isUsed)
+            {
+                throw new Exception("Нельзя удалить тип топлива, так как он используется в одном или нескольких автомобилях.");
+            }
+
+            return await fuelTypesRepository.DeleteAsync(fuelType);
         }
     }
 }

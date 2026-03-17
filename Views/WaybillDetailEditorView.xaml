@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <Window x:Class="WaybillWpf.Views.WaybillDetailEditorView"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,169 +8,324 @@
         xmlns:converters="clr-namespace:WaybillWpf.ViewModels.Converters"
         d:DataContext="{d:DesignInstance Type=viewmodels:WaybillDetailEditorViewModel}"
         mc:Ignorable="d"
-        Title="Запись о поездке" Height="650" Width="450"
-        WindowStartupLocation="CenterScreen" ResizeMode="NoResize" SizeToContent="Height"
-        Background="#FFFFFF" FontFamily="Segoe UI">
-
+        Title="Запись о поездке"
+        Height="650"
+        Width="450"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        SizeToContent="Height"
+        Background="#FFFFFF"
+        FontFamily="Segoe UI">
     <Window.Resources>
-        <converters:DateTimeToStringConverter x:Key="DateConverter"/>
-        
+        <converters:DateTimeToStringConverter x:Key="DateConverter" />
         <!-- Стиль заголовков секций -->
-        <Style x:Key="SectionHeader" TargetType="TextBlock">
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontWeight" Value="Bold"/>
-            <Setter Property="Foreground" Value="#374151"/>
-            <Setter Property="Margin" Value="0,0,0,10"/>
+        <Style x:Key="SectionHeader"
+               TargetType="TextBlock">
+            <Setter Property="FontSize"
+                    Value="14" />
+            <Setter Property="FontWeight"
+                    Value="Bold" />
+            <Setter Property="Foreground"
+                    Value="#374151" />
+            <Setter Property="Margin"
+                    Value="0,0,0,10" />
         </Style>
     </Window.Resources>
-
     <Grid Margin="25">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/> <!-- Время -->
-            <RowDefinition Height="Auto"/> <!-- Спидометр -->
-            <RowDefinition Height="Auto"/> <!-- Бак -->
-            <RowDefinition Height="Auto"/> <!-- Расход -->
-            <RowDefinition Height="Auto"/> <!-- Кнопки -->
+            <RowDefinition Height="Auto" />
+            <!-- Время -->
+            <RowDefinition Height="Auto" />
+            <!-- Спидометр -->
+            <RowDefinition Height="Auto" />
+            <!-- Бак -->
+            <RowDefinition Height="Auto" />
+            <!-- Заправка -->
+            <RowDefinition Height="Auto" />
+            <!-- Расход -->
+            <RowDefinition Height="Auto" />
+            <!-- Кнопки -->
         </Grid.RowDefinitions>
-
         <!-- 1. ВРЕМЯ -->
-        <Border Grid.Row="0" Background="#F9FAFB" CornerRadius="8" Padding="15" Margin="0,0,0,20">
+        <Border Grid.Row="0"
+                Background="#F9FAFB"
+                CornerRadius="8"
+                Padding="15"
+                Margin="0,0,0,20">
             <StackPanel>
-                <TextBlock Text="🕒 Время движения" Style="{StaticResource SectionHeader}"/>
-                
+                <TextBlock Text="🕒 Время движения"
+                           Style="{StaticResource SectionHeader}" />
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto"/>
-                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
-
-                    <TextBlock Grid.Row="0" Text="Выезд:" VerticalAlignment="Center" Foreground="#6B7280" Margin="0,0,15,15"/>
-                    <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding DepartureDateTime, Converter={StaticResource DateConverter}, UpdateSourceTrigger=LostFocus}" 
-                             Height="35" Padding="5" VerticalContentAlignment="Center" Margin="0,0,0,15"/>
-
-                    <TextBlock Grid.Row="1" Text="Возврат:" VerticalAlignment="Center" Foreground="#6B7280" Margin="0,0,15,0"/>
-                    <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding ArrivalDateTime, Converter={StaticResource DateConverter}, UpdateSourceTrigger=LostFocus}" 
-                             Height="35" Padding="5" VerticalContentAlignment="Center"/>
+                    <TextBlock Grid.Row="0"
+                               Text="Выезд:"
+                               VerticalAlignment="Center"
+                               Foreground="#6B7280"
+                               Margin="0,0,15,15" />
+                    <TextBox Grid.Row="0"
+                             Grid.Column="1"
+                             Text="{Binding DepartureDateTime, Converter={StaticResource DateConverter}, UpdateSourceTrigger=LostFocus}"
+                             Height="35"
+                             Padding="5"
+                             VerticalContentAlignment="Center"
+                             Margin="0,0,0,15" />
+                    <TextBlock Grid.Row="1"
+                               Text="Возврат:"
+                               VerticalAlignment="Center"
+                               Foreground="#6B7280"
+                               Margin="0,0,15,0" />
+                    <TextBox Grid.Row="1"
+                             Grid.Column="1"
+                             Text="{Binding ArrivalDateTime, Converter={StaticResource DateConverter}, UpdateSourceTrigger=LostFocus}"
+                             Height="35"
+                             Padding="5"
+                             VerticalContentAlignment="Center" />
                 </Grid>
+                <TextBlock Text="{Binding CalculatedTimeInWay, StringFormat='Время в пути: \{0:hh\\:mm\}'}"
+                           HorizontalAlignment="Center"
+                           Margin="0,10,0,0"
+                           FontStyle="Italic"
+                           Foreground="#6B7280"
+                           FontSize="13" />
             </StackPanel>
         </Border>
-
         <!-- 2. СПИДОМЕТР -->
-        <Border Grid.Row="1" Background="#F9FAFB" CornerRadius="8" Padding="15" Margin="0,0,0,20">
+        <Border Grid.Row="1"
+                Background="#F9FAFB"
+                CornerRadius="8"
+                Padding="15"
+                Margin="0,0,0,20">
             <StackPanel>
-                <TextBlock Text="🚗 Спидометр (км)" Style="{StaticResource SectionHeader}"/>
-                
+                <TextBlock Text="🚗 Спидометр (км)"
+                           Style="{StaticResource SectionHeader}" />
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-                    
                     <StackPanel Grid.Column="0">
-                        <TextBlock Text="Начало" FontSize="12" Foreground="#9CA3AF" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                        <TextBox Text="{Binding StartMealing, UpdateSourceTrigger=PropertyChanged}" Height="35" TextAlignment="Center" VerticalContentAlignment="Center"/>
+                        <TextBlock Text="Начало"
+                                   FontSize="12"
+                                   Foreground="#9CA3AF"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,5" />
+                        <TextBox Text="{Binding StartMealing, UpdateSourceTrigger=LostFocus, StringFormat='{}{0}'}"
+                                 Height="35"
+                                 TextAlignment="Center"
+                                 VerticalContentAlignment="Center" />
                     </StackPanel>
-
-                    <TextBlock Grid.Column="1" Text="→" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#9CA3AF" FontWeight="Bold"/>
-
+                    <TextBlock Grid.Column="1"
+                               Text="→"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Foreground="#9CA3AF"
+                               FontWeight="Bold" />
                     <StackPanel Grid.Column="2">
-                        <TextBlock Text="Конец" FontSize="12" Foreground="#9CA3AF" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                        <TextBox Text="{Binding EndMealing, UpdateSourceTrigger=PropertyChanged}" Height="35" TextAlignment="Center" VerticalContentAlignment="Center" FontWeight="SemiBold"/>
+                        <TextBlock Text="Конец"
+                                   FontSize="12"
+                                   Foreground="#9CA3AF"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,5" />
+                        <TextBox Text="{Binding EndMealing, UpdateSourceTrigger=LostFocus, StringFormat='{}{0}'}"
+                                 Height="35"
+                                 TextAlignment="Center"
+                                 VerticalContentAlignment="Center"
+                                 FontWeight="SemiBold" />
                     </StackPanel>
                 </Grid>
-                
-                <TextBlock Text="{Binding CalculatedDistance, StringFormat='Пробег за рейс: {0:F1} км'}" 
-                           HorizontalAlignment="Center" Margin="0,10,0,0" FontStyle="Italic" Foreground="#6B7280" FontSize="13"/>
+                <TextBlock Text="{Binding CalculatedDistance, StringFormat='Пробег за рейс: {0:F1} км'}"
+                           HorizontalAlignment="Center"
+                           Margin="0,10,0,0"
+                           FontStyle="Italic"
+                           Foreground="#6B7280"
+                           FontSize="13" />
             </StackPanel>
         </Border>
-
         <!-- 3. ОСТАТОК В БАКЕ -->
-        <Border Grid.Row="2" Background="#F9FAFB" CornerRadius="8" Padding="15" Margin="0,0,0,20">
+        <Border Grid.Row="2"
+                Background="#F9FAFB"
+                CornerRadius="8"
+                Padding="15"
+                Margin="0,0,0,20">
             <StackPanel>
-                <TextBlock Text="⛽ Остаток топлива (л)" Style="{StaticResource SectionHeader}"/>
-
+                <TextBlock Text="⛽ Остаток топлива (л)"
+                           Style="{StaticResource SectionHeader}" />
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-
                     <StackPanel Grid.Column="0">
-                        <TextBlock Text="На выезде" FontSize="12" Foreground="#9CA3AF" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                        <TextBox Text="{Binding StartFuel, UpdateSourceTrigger=PropertyChanged}" Height="35" TextAlignment="Center" VerticalContentAlignment="Center"/>
+                        <TextBlock Text="На выезде"
+                                   FontSize="12"
+                                   Foreground="#9CA3AF"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,5" />
+                        <TextBox Text="{Binding StartFuel, UpdateSourceTrigger=LostFocus, StringFormat='{}{0}'}"
+                                 Height="35"
+                                 TextAlignment="Center"
+                                 VerticalContentAlignment="Center" />
                     </StackPanel>
-
-                    <TextBlock Grid.Column="1" Text="→" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#9CA3AF" FontWeight="Bold"/>
-
+                    <TextBlock Grid.Column="1"
+                               Text="→"
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Center"
+                               Foreground="#9CA3AF"
+                               FontWeight="Bold" />
                     <StackPanel Grid.Column="2">
-                        <TextBlock Text="По прибытии" FontSize="12" Foreground="#9CA3AF" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                        <TextBox Text="{Binding EndFuel, UpdateSourceTrigger=PropertyChanged}" Height="35" TextAlignment="Center" VerticalContentAlignment="Center"/>
+                        <TextBlock Text="По прибытии"
+                                   FontSize="12"
+                                   Foreground="#9CA3AF"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,5" />
+                        <TextBox Text="{Binding EndFuel, UpdateSourceTrigger=LostFocus, StringFormat='{}{0}'}"
+                                 Height="35"
+                                 TextAlignment="Center"
+                                 VerticalContentAlignment="Center" />
                     </StackPanel>
                 </Grid>
             </StackPanel>
         </Border>
-
-        <!-- 4. РАСХОД ТОПЛИВА -->
-        <Border Grid.Row="3" Background="#EFF6FF" BorderBrush="#BFDBFE" BorderThickness="1" CornerRadius="8" Padding="15" Margin="0,0,0,25">
+        <!-- 4. ЗАПРАВКА -->
+        <Border Grid.Row="3"
+                Background="#F9FAFB"
+                CornerRadius="8"
+                Padding="15"
+                Margin="0,0,0,20">
             <StackPanel>
-                <TextBlock Text="📊 Итоговый расход" Style="{StaticResource SectionHeader}" Foreground="#1E40AF"/>
-
+                <TextBlock Text="🛢 Заправка"
+                           Style="{StaticResource SectionHeader}" />
+                <StackPanel Grid.Column="0">
+                    <TextBlock Text="Объем (л)"
+                               FontSize="12"
+                               Foreground="#9CA3AF"
+                               HorizontalAlignment="Center"
+                               Margin="0,0,0,5" />
+                    <TextBox Text="{Binding RefueledAmount, UpdateSourceTrigger=LostFocus, StringFormat='{}{0}'}"
+                             Height="35"
+                             TextAlignment="Center"
+                             VerticalContentAlignment="Center" />
+                </StackPanel>
+                <TextBlock Text="{Binding TotalRefuelingCost, StringFormat='Сумма: \{0:C\}'}"
+                           HorizontalAlignment="Center"
+                           Margin="0,10,0,0"
+                           FontStyle="Italic"
+                           Foreground="#6B7280"
+                           FontSize="13" />
+                <TextBlock Text="{Binding FuelPriceAtRefueling, StringFormat='(Цена: \{0:C\} / л)'}"
+                           HorizontalAlignment="Center"
+                           Margin="0,2,0,0"
+                           FontStyle="Italic"
+                           Foreground="#9CA3AF"
+                           FontSize="11" />
+            </StackPanel>
+        </Border>
+        <!-- 5. РАСХОД ТОПЛИВА -->
+        <Border Grid.Row="4"
+                Background="#EFF6FF"
+                BorderBrush="#BFDBFE"
+                BorderThickness="1"
+                CornerRadius="8"
+                Padding="15"
+                Margin="0,0,0,25">
+            <StackPanel>
+                <TextBlock Text="📊 Итоговый расход"
+                           Style="{StaticResource SectionHeader}"
+                           Foreground="#1E40AF" />
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="20"/>
-                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="20" />
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-
                     <!-- ФАКТ -->
                     <StackPanel Grid.Column="0">
-                        <TextBlock Text="ФАКТ (Ввод)" FontSize="11" FontWeight="Bold" Foreground="#1E3A8A" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                        <TextBox Text="{Binding FuelConsumedInput, StringFormat=F2, UpdateSourceTrigger=PropertyChanged}" 
-                                 Height="40" FontSize="18" FontWeight="Bold" Foreground="#1E3A8A"
-                                 VerticalContentAlignment="Center" TextAlignment="Center"
-                                 BorderBrush="#3B82F6" BorderThickness="2">
+                        <TextBlock Text="ФАКТ (Ввод)"
+                                   FontSize="11"
+                                   FontWeight="Bold"
+                                   Foreground="#1E3A8A"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,5" />
+                        <TextBox Text="{Binding FuelConsumedInput, UpdateSourceTrigger=LostFocus, StringFormat='{}{0}'}"
+                                 Height="40"
+                                 FontSize="18"
+                                 FontWeight="Bold"
+                                 Foreground="#1E3A8A"
+                                 VerticalContentAlignment="Center"
+                                 TextAlignment="Center"
+                                 BorderBrush="#3B82F6"
+                                 BorderThickness="2">
                             <TextBox.Resources>
                                 <Style TargetType="Border">
-                                    <Setter Property="CornerRadius" Value="5"/>
+                                    <Setter Property="CornerRadius"
+                                            Value="5" />
                                 </Style>
                             </TextBox.Resources>
                         </TextBox>
                     </StackPanel>
-
                     <!-- НОРМА -->
                     <StackPanel Grid.Column="2">
-                        <TextBlock Text="НОРМА (Расчет)" FontSize="11" FontWeight="Bold" Foreground="#065F46" HorizontalAlignment="Center" Margin="0,0,0,5"/>
-                        <Border Background="#D1FAE5" Height="40" CornerRadius="5">
-                            <TextBlock Text="{Binding CalculatedNormConsumption, StringFormat=F2}" 
-                                       FontSize="18" FontWeight="Bold" Foreground="#065F46"
-                                       VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <TextBlock Text="НОРМА (Расчет)"
+                                   FontSize="11"
+                                   FontWeight="Bold"
+                                   Foreground="#065F46"
+                                   HorizontalAlignment="Center"
+                                   Margin="0,0,0,5" />
+                        <Border Background="#D1FAE5"
+                                Height="40"
+                                CornerRadius="5">
+                            <TextBlock Text="{Binding CalculatedNormConsumption}"
+                                       FontSize="18"
+                                       FontWeight="Bold"
+                                       Foreground="#065F46"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Center" />
                         </Border>
                     </StackPanel>
                 </Grid>
             </StackPanel>
         </Border>
-
-        <!-- 5. КНОПКИ -->
-        <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Отмена" Command="{Binding CancelCommand}" IsCancel="True"
-                    Background="White" BorderBrush="#D1D5DB" BorderThickness="1"
-                    Padding="20,10" Margin="0,0,10,0">
+        <!-- 6. КНОПКИ -->
+        <StackPanel Grid.Row="5"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+            <Button Content="Отмена"
+                    Command="{Binding CancelCommand}"
+                    IsCancel="True"
+                    Background="White"
+                    BorderBrush="#D1D5DB"
+                    BorderThickness="1"
+                    Padding="20,10"
+                    Margin="0,0,10,0">
                 <Button.Resources>
-                    <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius"
+                                Value="6" />
+                    </Style>
                 </Button.Resources>
             </Button>
-
-            <Button Content="Сохранить" Command="{Binding SaveCommand}" IsDefault="True"
-                    Background="#3B82F6" Foreground="White" FontWeight="Bold" BorderThickness="0"
+            <Button Content="Сохранить"
+                    Command="{Binding SaveCommand}"
+                    IsDefault="True"
+                    Background="#3B82F6"
+                    Foreground="White"
+                    FontWeight="Bold"
+                    BorderThickness="0"
                     Padding="25,10">
                 <Button.Resources>
-                    <Style TargetType="Border"><Setter Property="CornerRadius" Value="6"/></Style>
+                    <Style TargetType="Border">
+                        <Setter Property="CornerRadius"
+                                Value="6" />
+                    </Style>
                 </Button.Resources>
             </Button>
         </StackPanel>

@@ -9,7 +9,7 @@ public abstract class BaseRepository<T>(ApplicationContext context) : IBaseRepos
     public virtual async Task<T?> GetByIdAsync(int id) => await context.Set<T>().AsNoTracking().FirstOrDefaultAsync((e) => e.Id == id);
 
     public virtual async Task<ICollection<T>> GetAllAsync() => await context.Set<T>().AsNoTracking().ToListAsync();
-    
+
     public virtual async Task<bool> AddAsync(T entity)
     {
         await context.Set<T>().AddAsync(entity);
@@ -18,6 +18,12 @@ public abstract class BaseRepository<T>(ApplicationContext context) : IBaseRepos
 
     public virtual async Task<bool> UpdateAsync(T entity)
     {
+        var local = context.Set<T>().Local.FirstOrDefault(entry => entry.Id.Equals(entity.Id));
+        if (local != null)
+        {
+            context.Entry(local).State = EntityState.Detached;
+        }
+
         context.Set<T>().Update(entity);
         return await context.SaveChangesAsync() > 0;
     }

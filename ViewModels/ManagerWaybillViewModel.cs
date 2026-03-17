@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows; // Для MessageBox
 using System.Windows.Input;
+using Microsoft.Win32;
 using WaybillWpf.Domain.Entities;
 using WaybillWpf.Domain.Enums;
 using WaybillWpf.Domain.Exceptions;
@@ -25,7 +26,8 @@ namespace WaybillWpf.ViewModels
         private readonly ICarManagementService _carManagementService;
         private readonly IWaybillStateTransitionsService _waybillStateTransitionsService;
         private readonly IWaybillDetailsRepository _waybillDetailsRepository;
-        
+        private readonly IConvertToWordService _wordService;
+
         private ICollection<Driver> _availableDrivers = new List<Driver>();
         private ICollection<Car> _availableCars = new List<Car>();
 
@@ -55,7 +57,7 @@ namespace WaybillWpf.ViewModels
                 UpdateDetailPanelState();
             }
         }
-        
+
         // --- Выбранный элемент ---
         private WaybillDetails? _selectedWaybillDetails;
 
@@ -86,9 +88,9 @@ namespace WaybillWpf.ViewModels
         }
 
         // --- Состояние UI ---
-        public bool IsDetailPanelVisible => SelectedWaybill != null; 
-        public bool CanEditTask => SelectedWaybill?.WaybillStatus == WaybillStatus.Draft; 
-        public bool CanEditDetails => SelectedWaybill?.WaybillStatus == WaybillStatus.Accepting; 
+        public bool IsDetailPanelVisible => SelectedWaybill != null;
+        public bool CanEditTask => SelectedWaybill?.WaybillStatus == WaybillStatus.Draft;
+        public bool CanEditDetails => SelectedWaybill?.WaybillStatus == WaybillStatus.Accepting;
         public bool CanIssue => SelectedWaybill?.WaybillStatus == WaybillStatus.Draft;
         public bool CanComplete => SelectedWaybill?.WaybillStatus == WaybillStatus.Accepting;
         public bool CanArchive => SelectedWaybill?.WaybillStatus == WaybillStatus.Completed;
@@ -105,18 +107,21 @@ namespace WaybillWpf.ViewModels
         public ICommand DeleteWaybillCommand { get; } // Команда удаления черновика (если нужна)
 
         // === НОВЫЕ КОМАНДЫ ===
-        
+
         public ICommand EditWaybillDetailCommand { get; }
         public ICommand AddTaskCommand { get; }
         public ICommand DeleteTaskCommand { get; }
         public ICommand LogOutCommand { get; }
-        
+
+        public ICommand ExportToExcelCommand { get; }
+
         public event Action? CloseAction;
 
         // --- Конструктор ---
         public ManagerWaybillViewModel(IWaybillFlowService waybillFlowService, ICurrentUserService currentUserService,
-            IDriverManagementService driverManagementService, ICarManagementService carManagementService, 
-            IWaybillStateTransitionsService waybillStateTransitionsService, IWaybillDetailsRepository waybillDetailsRepository)
+            IDriverManagementService driverManagementService, ICarManagementService carManagementService,
+            IWaybillStateTransitionsService waybillStateTransitionsService, IWaybillDetailsRepository waybillDetailsRepository,
+            IConvertToExcelService excelService, IConvertToWordService wordService)
         {
             _waybillFlowService = waybillFlowService;
             _currentUserService = currentUserService;
@@ -124,12 +129,13 @@ namespace WaybillWpf.ViewModels
             _carManagementService = carManagementService;
             _waybillStateTransitionsService = waybillStateTransitionsService;
             _waybillDetailsRepository = waybillDetailsRepository;
+            _wordService = wordService;
 
             // Инициализация команд
             LoadCommand = new RelayCommand(async void (_) => await LoadDataAsync());
             AddWaybillCommand = new RelayCommand(async void (_) => await OnAddWaybillAsync());
             ArchiveWaybillCommand = new RelayCommand(async void (_) => await OnArchiveWaybillAsync(), _ => CanArchive);
-           
+
             IssueWaybillCommand = new RelayCommand(async void (_) => await OnIssueWaybillAsync(), _ => CanIssue);
             CompleteWaybillCommand = new RelayCommand(async void (_) => await OnCompleteWaybillAsync(), _ => CanComplete);
             DeclineWaybillCommand = new RelayCommand(async void (_) => await onDeclineWaybillAsync(), _ => CanComplete);
@@ -138,13 +144,16 @@ namespace WaybillWpf.ViewModels
             // === Инициализация НОВЫХ команд ===
             AddTaskCommand = new RelayCommand(async void (_) => await OnAddTaskAsync(), _ => CanEditTask);
             DeleteTaskCommand = new RelayCommand(async void (param) => await OnDeleteTaskAsync(param!), _ => CanEditTask);
-            EditWaybillDetailCommand =  new RelayCommand(async void (param) => await EditDetailAsync(), _ => CanEditDetails);
-            
-            LogOutCommand = new RelayCommand(_ => { 
+            EditWaybillDetailCommand = new RelayCommand(async void (param) => await EditDetailAsync(), _ => CanEditDetails);
+
+            LogOutCommand = new RelayCommand(_ =>
+            {
                 ServicesProvider.GetService<CurrentUserService>()?.Logout();
                 ServicesProvider.GetService<LoginView>()?.Show();
-               CloseAction?.Invoke();
+                CloseAction?.Invoke();
             });
+
+            ExportToExcelCommand = new RelayCommand(_ => OnExportToExcel(), _ => SelectedWaybill != null);
 
             //Загружаем данные при старте
             LoadCommand.Execute(null);
@@ -152,7 +161,7 @@ namespace WaybillWpf.ViewModels
 
         private async Task onDeclineWaybillAsync()
         {
-            
+
             if (SelectedWaybill == null) return;
 
             var result = MessageBox.Show(
@@ -174,12 +183,12 @@ namespace WaybillWpf.ViewModels
                     reasonView.DialogResult = result;
                     reasonView.Close();
                 };
-                
+
                 reasonView.DataContext = reasonVM;
                 reasonView.ShowDialog();
 
                 if (reasonView.DialogResult == false) return;
-                
+
                 await _waybillStateTransitionsService.DeclineWaybillAsync(SelectedWaybill.Id, reasonVM.RejectionReason);
                 MessageBox.Show("Рейс успешно завершен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
                 await LoadDataAsync();
@@ -227,23 +236,23 @@ namespace WaybillWpf.ViewModels
         {
             if (SelectedWaybill == null) return;
             if (MessageBox.Show("Удалить черновик?", "Удаление", MessageBoxButton.YesNo) != MessageBoxResult.Yes) return;
-            try 
-            { 
-                await _waybillFlowService.DeleteWaybillAsync(SelectedWaybill.Id); 
+            try
+            {
+                await _waybillFlowService.DeleteWaybillAsync(SelectedWaybill.Id);
                 await LoadDataAsync();
             }
-            catch(Exception ex) { MessageBox.Show(ex.Message); }
+            catch (Exception ex) { MessageBox.Show(ex.Message); }
         }
 
 
-        
+
 
         private bool CheckDriverAndCar()
         {
             if (SelectedWaybill == null)
                 return false;
 
-            if (!_availableCars.Contains(SelectedWaybill.Car) || !_availableDrivers.Contains(SelectedWaybill.Driver))
+            if (!_availableCars.Any(c => c.Id == SelectedWaybill.CarId) || !_availableDrivers.Any(d => d.Id == SelectedWaybill.DriverId))
             {
                 MessageBox.Show("Выбранная машина или водитель сейчас находятся в другом рейсе");
                 return false;
@@ -340,7 +349,7 @@ namespace WaybillWpf.ViewModels
         private async Task OnIssueWaybillAsync()
         {
             if (!CheckDriverAndCar()) return;
-            
+
             var result = MessageBox.Show(
                 "Вы уверены, что хотите 'Выдать' этот путевой лист?\n\n",
                 "Подтверждение",
@@ -349,8 +358,8 @@ namespace WaybillWpf.ViewModels
 
             if (result != MessageBoxResult.Yes)
                 return;
-            
-            if(!_availableCars.Contains(SelectedWaybill.Car!) &&
+
+            if (!_availableCars.Contains(SelectedWaybill.Car!) &&
                !_availableDrivers.Contains(SelectedWaybill.Driver!))
             {
                 MessageBox.Show("Вы не можете выдать его т.к. водитель или машина уже заняты");
@@ -427,11 +436,11 @@ namespace WaybillWpf.ViewModels
                     MessageBoxImage.Error);
             }
         }
-        
+
         private async Task EditDetailAsync()
         {
-            if(SelectedWaybillDetails == null) return;
-        
+            if (SelectedWaybillDetails == null) return;
+
             var vmDetails = ServicesProvider.GetService<WaybillDetailEditorViewModel>();
             var windowDetails = ServicesProvider.GetService<WaybillDetailEditorView>();
 
@@ -444,7 +453,7 @@ namespace WaybillWpf.ViewModels
             // В Initialize теперь передаем 0,0 и расход машины (если обновили метод)
             // Либо ваш старый вариант:
             float carRate = SelectedWaybill?.Car?.FuelRate ?? 0;
-            vmDetails.Initialize(SelectedWaybill, SelectedWaybillDetails); 
+            vmDetails.Initialize(SelectedWaybill, SelectedWaybillDetails);
 
             vmDetails.RequestClose += (_) => windowDetails.Close();
 
@@ -467,7 +476,7 @@ namespace WaybillWpf.ViewModels
             }
         }
 
-        
+
 
         private void UpdateDetailPanelState()
         {
@@ -478,7 +487,42 @@ namespace WaybillWpf.ViewModels
             OnPropertyChanged(nameof(IsDetailPanelVisible));
             OnPropertyChanged(nameof(CanEditDetails));
             OnPropertyChanged(nameof(CanEditTask));
+            (ExportToExcelCommand as RelayCommand)?.RaiseCanExecuteChanged();
         }
-        
+
+        private void OnExportToExcel()
+        {
+            if (SelectedWaybill == null) return;
+
+            // 1. Запрашиваем путь к шаблону
+
+
+            string templatePath = "C:\\Programming\\Projects\\C#\\WaybillWpf\\WaybillWpf\\шаблон для ворд путевые листы.docx";
+
+            // 2. Запрашиваем путь для сохранения файла
+            var saveFileDialog = new SaveFileDialog
+            {
+                Title = "Сохранить путевой лист",
+                Filter = "Word Files|*.docx",
+                FileName = $"ПутевойЛист_{SelectedWaybill.Id}_{DateTime.Now:yyyyMMdd}.docx"
+            };
+
+            if (saveFileDialog.ShowDialog() != true)
+                return;
+
+            string outputPath = saveFileDialog.FileName;
+
+            // 3. Выполняем экспорт
+            try
+            {
+                _wordService.ExportToWord(SelectedWaybill, templatePath, outputPath);
+                MessageBox.Show("Экспорт успешно завершен!", "Успех", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при экспорте: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
     }
 }

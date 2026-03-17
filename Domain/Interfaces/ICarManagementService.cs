@@ -10,4 +10,7 @@ public interface ICarManagementService
     Task<bool> SaveCarAsync(Car car); // (create/update)
     Task<ICollection<Car>> GetAvailableCarsAsync(); // (не в "Issued" рейсе)
     Task<bool> DeleteCarAsync(int carId); // (с проверкой)
-} 
+    Task<List<FuelType>> GetFuelTypesAsync();
+    Task<bool> SaveFuelTypeAsync(FuelType fuelType); // Create / Update
+    Task<bool> DeleteFuelTypeAsync(int fuelTypeId);
+}

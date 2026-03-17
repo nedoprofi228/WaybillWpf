@@ -21,6 +21,13 @@ public class WaybillDetails : BaseEntity
     public float StartRemeaningFuel { get; set; }
     public float EndRemeaningFuel { get; set; }
 
+    // ЗАПРАВКА (Вручную)
+    public float RefueledAmount { get; set; }
+    public decimal FuelPriceAtRefueling { get; set; }
+
+    [NotMapped]
+    public decimal TotalFuelCost => (decimal)RefueledAmount * FuelPriceAtRefueling;
+
     // ФАКТИЧЕСКИЙ РАСХОД (Вручную)
     // Пользователь вводит сам, т.к. могли быть заправки или сливы
     public float FuelConsumed { get; set; }
@@ -28,9 +35,9 @@ public class WaybillDetails : BaseEntity
     // НОРМА (Автоматически)
     // Не храним в БД, считаем на лету
     [NotMapped]
-    public double NormalFuelConsumed => 
-        Waybill?.Car != null 
-            ? Distance * (Waybill.Car.FuelRate/100)
+    public double NormalFuelConsumed =>
+        Waybill?.Car != null
+            ? Distance * (Waybill.Car.FuelRate / 100)
             : 0;
 
     [NotMapped]

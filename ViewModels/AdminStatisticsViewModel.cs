@@ -21,8 +21,8 @@ public class AdminStatisticsViewModel : BaseViewModel
         get => _startDate;
         set
         {
-            _startDate = DateTime.SpecifyKind(value, DateTimeKind.Utc); 
-            OnPropertyChanged(); 
+            _startDate = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+            OnPropertyChanged();
         }
     }
 
@@ -32,8 +32,8 @@ public class AdminStatisticsViewModel : BaseViewModel
         get => _endDate;
         set
         {
-            _endDate = DateTime.SpecifyKind(value, DateTimeKind.Utc); 
-            OnPropertyChanged(); 
+            _endDate = DateTime.SpecifyKind(value, DateTimeKind.Utc);
+            OnPropertyChanged();
         }
     }
 
@@ -56,13 +56,20 @@ public class AdminStatisticsViewModel : BaseViewModel
         get => _dashboard;
         set { _dashboard = value; OnPropertyChanged(); }
     }
-    
+
     // === ГРАФИК ===
     private SeriesCollection _fuelChartSeries;
     public SeriesCollection FuelChartSeries
     {
         get => _fuelChartSeries;
         set { _fuelChartSeries = value; OnPropertyChanged(); }
+    }
+
+    private SeriesCollection _financeChartSeries;
+    public SeriesCollection FinanceChartSeries
+    {
+        get => _financeChartSeries;
+        set { _financeChartSeries = value; OnPropertyChanged(); }
     }
 
     private string[] _chartLabels;
@@ -73,6 +80,7 @@ public class AdminStatisticsViewModel : BaseViewModel
     }
 
     public Func<double, string> ChartFormatter { get; set; }
+    public Func<double, string> ChartFormatterCurrency { get; set; }
 
     // === СПИСКИ ===
     public ObservableCollection<FuelEfficiencyReportItem> FuelReport { get; set; } = new();
@@ -85,9 +93,10 @@ public class AdminStatisticsViewModel : BaseViewModel
     {
         _statService = statService;
         LoadStatsCommand = new RelayCommand(async _ => await LoadAsync());
-        
-        ChartFormatter = value => value.ToString("N0");
-        
+
+        ChartFormatter = value => value.ToString("N0") + " л";
+        ChartFormatterCurrency = value => value.ToString("C0");
+
         // Значения по умолчанию
         StartDate = DateTime.Today.AddMonths(-1);
         EndDate = DateTime.Today;
@@ -126,23 +135,24 @@ public class AdminStatisticsViewModel : BaseViewModel
             FuelReport = new ObservableCollection<FuelEfficiencyReportItem>(fuelData);
             MileageByCarReport = new ObservableCollection<MileageReportItem>(carStats);
             MileageByDriverReport = new ObservableCollection<MileageReportItem>(driverStats);
-            
+
             OnPropertyChanged(nameof(FuelReport));
             OnPropertyChanged(nameof(MileageByCarReport));
             OnPropertyChanged(nameof(MileageByDriverReport));
 
             // 4. === СТРОИМ ГРАФИК (по отфильтрованным данным) ===
-            
+
             // Если данных нет после фильтра - очищаем график
             if (!fuelData.Any())
             {
                 ChartLabels = new string[0];
                 FuelChartSeries = new SeriesCollection();
+                FinanceChartSeries = new SeriesCollection();
                 return;
             }
 
             // Ось X - Названия машин
-            ChartLabels = fuelData.Select(x => x.CarModel).ToArray(); 
+            ChartLabels = fuelData.Select(x => x.CarModel).ToArray();
 
             // Столбцы
             FuelChartSeries = new SeriesCollection
@@ -158,6 +168,23 @@ public class AdminStatisticsViewModel : BaseViewModel
                     Title = "Норма (л)",
                     Values = new ChartValues<float>(fuelData.Select(x => x.NormFuel)),
                     Fill = System.Windows.Media.Brushes.CornflowerBlue
+                }
+            };
+
+            // Финансовые столбцы
+            FinanceChartSeries = new SeriesCollection
+            {
+                new ColumnSeries
+                {
+                    Title = "Факт (руб)",
+                    Values = new ChartValues<decimal>(fuelData.Select(x => x.FactCost)),
+                    Fill = System.Windows.Media.Brushes.OrangeRed
+                },
+                new ColumnSeries
+                {
+                    Title = "Норма (руб)",
+                    Values = new ChartValues<decimal>(fuelData.Select(x => x.NormCost)),
+                    Fill = System.Windows.Media.Brushes.MediumSeaGreen
                 }
             };
         }

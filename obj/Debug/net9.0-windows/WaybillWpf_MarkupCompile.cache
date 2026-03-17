@@ -1,20 +1,20 @@
 ﻿WaybillWpf
-1.0.0.0
+
 
 winexe
 C#
 .cs
-c:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\obj\Debug\net9.0-windows\
 WaybillWpf
 none
 false
 TRACE;DEBUG;NET;NET9_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NET9_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
-c:\Programming\Projects\C#\WaybillWpf\WaybillWpf\App.xaml
-151165156723
+C:\Programming\Projects\C#\WaybillWpf\WaybillWpf\App.xaml
+17714640829
 
-95-294532696
-2321241290576
-MainWindow.xaml;Views\AdminCarsView.xaml;Views\AdminDriversView.xaml;Views\AdminMainView.xaml;Views\AdminStatisticsView.xaml;Views\CarEditorView.xaml;Views\DriverManagementView.xaml;Views\DriverRegistrationView.xaml;Views\LoginView.xaml;Views\ManagerWaybillView.xaml;Views\NewWaybillView.xaml;Views\ReasonEditorView.xaml;Views\RegistrationView.xaml;Views\WaybillDetailEditorView.xaml;Views\WaybillTaskEditorView.xaml;
+105-412333023
+243-1150529097
+MainWindow.xaml;Views\AdminCarsView.xaml;Views\AdminDriversView.xaml;Views\AdminFuelTypesView.xaml;Views\AdminMainView.xaml;Views\AdminStatisticsView.xaml;Views\CarEditorView.xaml;Views\DriverManagementView.xaml;Views\DriverRegistrationView.xaml;Views\FuelTypeEditorView.xaml;Views\LoginView.xaml;Views\ManagerWaybillView.xaml;Views\NewWaybillView.xaml;Views\ReasonEditorView.xaml;Views\RegistrationView.xaml;Views\WaybillDetailEditorView.xaml;Views\WaybillTaskEditorView.xaml;
 
-True
+False
 

@@ -55,10 +55,11 @@ namespace WaybillWpf.ViewModels.Admin
             if (editorVm == null) return;
 
             // Если редактируем - передаем данные, если добавляем - будет пустой
-            if (carToEdit != null) 
-                editorVm.Initialize(carToEdit); 
-            else 
-                editorVm.Initialize(new Car());
+            var fuelTypes = await _carService.GetFuelTypesAsync();
+            if (carToEdit != null)
+                editorVm.Initialize(carToEdit, fuelTypes);
+            else
+                editorVm.Initialize(new Car(), fuelTypes);
 
             // Открываем окно (View должно быть привязано к этой VM)
             var window = ServicesProvider.GetService<CarEditorView>(); // View нужно создать
@@ -67,9 +68,9 @@ namespace WaybillWpf.ViewModels.Admin
                 window.DialogResult = result;
                 window.Close();
             };
-            
+
             window.DataContext = editorVm;
-            
+
             if (window.ShowDialog() == true)
             {
                 await LoadAsync(); // Обновляем список после сохранения
@@ -80,7 +81,7 @@ namespace WaybillWpf.ViewModels.Admin
         {
             if (MessageBox.Show($"Удалить {SelectedCar!.Model}?", "Подтверждение", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
             {
-                try 
+                try
                 {
                     await _carService.DeleteCarAsync(SelectedCar.Id);
                     await LoadAsync();

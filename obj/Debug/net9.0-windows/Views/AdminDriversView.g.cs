@@ -52,7 +52,7 @@ namespace WaybillWpf.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/WaybillWpf;V1.0.0.0;component/views/admindriversview.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/WaybillWpf;component/views/admindriversview.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Views\AdminDriversView.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);
